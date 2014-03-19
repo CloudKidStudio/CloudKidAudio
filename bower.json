@@ -1,7 +1,7 @@
 {
     "name": "cloudkid-audio",
     "version": "1.0.0",
-    "main": "deploy/cloudkid-audio.js",
+    "main": "dist/cloudkid-audio.js",
     "dependencies": {
         "tweenjs" : "https://github.com/CloudKidStudio/TweenJS.git",
         "swish-sprite" : "*",
