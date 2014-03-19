@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>CloudKidAudio Test Example</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		
+		<link rel="stylesheet" href="css/normalize.min.css">
+		<link rel="stylesheet" href="css/sprite.css">
+		
+		<script src="js/vendor/jquery-1.8.2.min.js"></script>
+		<script src="../libs/preloadjs-0.3.2.min.js"></script>
+		<script src="../libs/easeljs-0.6.1.min.js"></script>
+		<script src="../libs/cloudkid-os-createjs.min.js"></script>
+		<script src="../deploy/cloudkid-audio.debug.js"></script>
+		
+		<script src="js/Sprite.js"></script>	
+			
+ 	</head>
+	<body class="unloaded">
+		<button id="load" class="disabled" disabled>Load</button>
+		<div class="controlsFrame">
+			<div class="controls">
+				<h1>Controls</h1>
+				<ul>				
+					<li><button data-action="stop" class="control disabled" disabled>Stop</button></li>
+					<li><button data-action="pause" class="control disabled" disabled>Pause</button></li>
+					<li><button data-action="unpause" class="control disabled" disabled>Unpause</button></li>
+					<li><button data-action="mute" class="control disabled" disabled>Mute</button></li>
+					<li><button data-action="unmute" class="control disabled" disabled>Unmute</button></li>
+				</ul>
+				<br style="clear:both">
+			</div>
+			<div class="timeline">
+				<div class="playbar" id="playbar"></div>
+			</div>
+		</div>
+		<div class="aliases">
+			<h1>Aliases</h1>
+			<ul id="aliases"></ul>
+			<br style="clear:both">
+		</div>
+	</body>
+</html>

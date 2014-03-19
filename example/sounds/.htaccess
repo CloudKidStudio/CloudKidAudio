@@ -1,0 +1,5 @@
+# AddType TYPE/SUBTYPE EXTENSION
+AddType audio/mpeg mp3
+AddType audio/mp4 m4a
+AddType audio/ogg ogg
+AddType audio/ogg oga

@@ -1,0 +1,750 @@
+{
+  "resources": [
+	"sounds/pizzaplaceaudio.m4a",
+	"sounds/pizzaplaceaudio.oga",
+	"sounds/pizzaplaceaudio.mp3"		
+  ],
+  "spritemap": {
+    "silence": {
+      "start": 0,
+      "end": 5,
+      "loop": true
+    },
+    "Cat_PizzaReward2": {
+      "start": 6,
+      "end": 7.5416326530612245,
+      "loop": false
+    },
+    "Jesse_PizzaReward1": {
+      "start": 9,
+      "end": 10.109795918367347,
+      "loop": false
+    },
+    "Mora_PizzaReward1": {
+      "start": 12,
+      "end": 12.9937641723356,
+      "loop": false
+    },
+    "Peg_10PieceOf": {
+      "start": 14,
+      "end": 16.02888888888889,
+      "loop": false
+    },
+    "Peg_1PieceOf": {
+      "start": 18,
+      "end": 19.213174603174604,
+      "loop": false
+    },
+    "Peg_2PieceOf": {
+      "start": 21,
+      "end": 22.64371882086168,
+      "loop": false
+    },
+    "Peg_3PieceOf": {
+      "start": 24,
+      "end": 25.821360544217686,
+      "loop": false
+    },
+    "Peg_4PieceOf": {
+      "start": 27,
+      "end": 29.012312925170068,
+      "loop": false
+    },
+    "Peg_5PieceOf": {
+      "start": 31,
+      "end": 33.079795918367346,
+      "loop": false
+    },
+    "Peg_6PieceOf": {
+      "start": 35,
+      "end": 37.32492063492064,
+      "loop": false
+    },
+    "Peg_7PieceOf": {
+      "start": 39,
+      "end": 41.230226757369614,
+      "loop": false
+    },
+    "Peg_8PieceOf": {
+      "start": 43,
+      "end": 45.03480725623583,
+      "loop": false
+    },
+    "Peg_9PieceOf": {
+      "start": 47,
+      "end": 49.18791383219955,
+      "loop": false
+    },
+    "Peg_AllDone1": {
+      "start": 51,
+      "end": 54.536961451247166,
+      "loop": false
+    },
+    "Peg_AllDone2": {
+      "start": 56,
+      "end": 57.8459410430839,
+      "loop": false
+    },
+    "Peg_AllDone3": {
+      "start": 59,
+      "end": 61.74448979591837,
+      "loop": false
+    },
+    "Peg_AndThisFourthHas": {
+      "start": 63,
+      "end": 64.53698412698412,
+      "loop": false
+    },
+    "Peg_AndThisHalfHas": {
+      "start": 66,
+      "end": 67.43877551020408,
+      "loop": false
+    },
+    "Peg_Artichoke": {
+      "start": 69,
+      "end": 70.12410430839002,
+      "loop": false
+    },
+    "Peg_Artichokes": {
+      "start": 72,
+      "end": 73.24668934240363,
+      "loop": false
+    },
+    "Peg_Broccoli": {
+      "start": 75,
+      "end": 76.02857142857142,
+      "loop": false
+    },
+    "Peg_CatReallyLikes": {
+      "start": 78,
+      "end": 80.1547619047619,
+      "loop": false
+    },
+    "Peg_CatWantsFourth": {
+      "start": 82,
+      "end": 83.84943310657596,
+      "loop": false
+    },
+    "Peg_CatWantsHalf": {
+      "start": 85,
+      "end": 86.99444444444444,
+      "loop": false
+    },
+    "Peg_CatWantsPart": {
+      "start": 88,
+      "end": 90.45725623582767,
+      "loop": false
+    },
+    "Peg_CatWantsWhole": {
+      "start": 92,
+      "end": 94.09219954648526,
+      "loop": false
+    },
+    "Peg_ClickTheToppingToPickItUp": {
+      "start": 96,
+      "end": 100.7358276643991,
+      "loop": false
+    },
+    "Peg_CorrectLetsCount1": {
+      "start": 102,
+      "end": 104.54598639455783,
+      "loop": false
+    },
+    "Peg_CorrectLetsCount2": {
+      "start": 106,
+      "end": 109.16480725623583,
+      "loop": false
+    },
+    "Peg_Counting1": {
+      "start": 111,
+      "end": 111.51446712018141,
+      "loop": false
+    },
+    "Peg_Counting10": {
+      "start": 113,
+      "end": 113.4456462585034,
+      "loop": false
+    },
+    "Peg_Counting10_End": {
+      "start": 115,
+      "end": 115.8118820861678,
+      "loop": false
+    },
+    "Peg_Counting11": {
+      "start": 117,
+      "end": 117.77260770975057,
+      "loop": false
+    },
+    "Peg_Counting11_End": {
+      "start": 119,
+      "end": 120.19192743764172,
+      "loop": false
+    },
+    "Peg_Counting12": {
+      "start": 122,
+      "end": 122.6701133786848,
+      "loop": false
+    },
+    "Peg_Counting12_End": {
+      "start": 124,
+      "end": 124.74219954648527,
+      "loop": false
+    },
+    "Peg_Counting13": {
+      "start": 126,
+      "end": 126.76117913832199,
+      "loop": false
+    },
+    "Peg_Counting13_End": {
+      "start": 128,
+      "end": 129.05854875283447,
+      "loop": false
+    },
+    "Peg_Counting14": {
+      "start": 131,
+      "end": 131.68725623582768,
+      "loop": false
+    },
+    "Peg_Counting14_End": {
+      "start": 133,
+      "end": 134.1236961451247,
+      "loop": false
+    },
+    "Peg_Counting15": {
+      "start": 136,
+      "end": 136.57716553287983,
+      "loop": false
+    },
+    "Peg_Counting15_End": {
+      "start": 138,
+      "end": 138.92297052154194,
+      "loop": false
+    },
+    "Peg_Counting16": {
+      "start": 140,
+      "end": 140.838231292517,
+      "loop": false
+    },
+    "Peg_Counting16_End": {
+      "start": 142,
+      "end": 143.04301587301586,
+      "loop": false
+    },
+    "Peg_Counting17": {
+      "start": 145,
+      "end": 145.829410430839,
+      "loop": false
+    },
+    "Peg_Counting17_End": {
+      "start": 147,
+      "end": 148.16986394557824,
+      "loop": false
+    },
+    "Peg_Counting18": {
+      "start": 150,
+      "end": 150.62936507936507,
+      "loop": false
+    },
+    "Peg_Counting18_End": {
+      "start": 152,
+      "end": 152.8831292517007,
+      "loop": false
+    },
+    "Peg_Counting19": {
+      "start": 154,
+      "end": 154.75925170068027,
+      "loop": false
+    },
+    "Peg_Counting19_End": {
+      "start": 156,
+      "end": 156.91274376417235,
+      "loop": false
+    },
+    "Peg_Counting1_End": {
+      "start": 158,
+      "end": 158.60630385487528,
+      "loop": false
+    },
+    "Peg_Counting2": {
+      "start": 160,
+      "end": 160.51455782312925,
+      "loop": false
+    },
+    "Peg_Counting20": {
+      "start": 162,
+      "end": 162.59163265306123,
+      "loop": false
+    },
+    "Peg_Counting20_End": {
+      "start": 164,
+      "end": 164.88040816326532,
+      "loop": false
+    },
+    "Peg_Counting2_End": {
+      "start": 166,
+      "end": 166.65925170068027,
+      "loop": false
+    },
+    "Peg_Counting3": {
+      "start": 168,
+      "end": 168.46925170068027,
+      "loop": false
+    },
+    "Peg_Counting3_End": {
+      "start": 170,
+      "end": 170.6120634920635,
+      "loop": false
+    },
+    "Peg_Counting4": {
+      "start": 172,
+      "end": 172.51349206349207,
+      "loop": false
+    },
+    "Peg_Counting4_End": {
+      "start": 174,
+      "end": 174.66226757369614,
+      "loop": false
+    },
+    "Peg_Counting5": {
+      "start": 176,
+      "end": 176.57839002267573,
+      "loop": false
+    },
+    "Peg_Counting5_End": {
+      "start": 178,
+      "end": 178.76104308390023,
+      "loop": false
+    },
+    "Peg_Counting6": {
+      "start": 180,
+      "end": 180.72371882086168,
+      "loop": false
+    },
+    "Peg_Counting6_End": {
+      "start": 182,
+      "end": 182.68954648526076,
+      "loop": false
+    },
+    "Peg_Counting7": {
+      "start": 184,
+      "end": 184.61925170068028,
+      "loop": false
+    },
+    "Peg_Counting7_End": {
+      "start": 186,
+      "end": 186.90263038548753,
+      "loop": false
+    },
+    "Peg_Counting8": {
+      "start": 188,
+      "end": 188.50306122448978,
+      "loop": false
+    },
+    "Peg_Counting8_End": {
+      "start": 190,
+      "end": 190.54473922902494,
+      "loop": false
+    },
+    "Peg_Counting9": {
+      "start": 192,
+      "end": 192.56621315192743,
+      "loop": false
+    },
+    "Peg_Counting9_End": {
+      "start": 194,
+      "end": 194.77421768707484,
+      "loop": false
+    },
+    "Peg_CowReallyLikes": {
+      "start": 196,
+      "end": 197.88707482993198,
+      "loop": false
+    },
+    "Peg_CowWantsFourth": {
+      "start": 199,
+      "end": 201.20718820861677,
+      "loop": false
+    },
+    "Peg_CowWantsHalf": {
+      "start": 203,
+      "end": 204.95580498866212,
+      "loop": false
+    },
+    "Peg_CowWantsPart": {
+      "start": 206,
+      "end": 208.5935827664399,
+      "loop": false
+    },
+    "Peg_CowWantsWhole": {
+      "start": 210,
+      "end": 212.24909297052153,
+      "loop": false
+    },
+    "Peg_DoCustomer1": {
+      "start": 214,
+      "end": 216.050589569161,
+      "loop": false
+    },
+    "Peg_DoCustomer2": {
+      "start": 218,
+      "end": 220.5491836734694,
+      "loop": false
+    },
+    "Peg_DoCustomer3": {
+      "start": 222,
+      "end": 224.08532879818594,
+      "loop": false
+    },
+    "Peg_DoCustomer4": {
+      "start": 226,
+      "end": 228.068820861678,
+      "loop": false
+    },
+    "Peg_EveryoneHasWhatAsked": {
+      "start": 230,
+      "end": 234.58600907029478,
+      "loop": false
+    },
+    "Peg_HereListHereToppings": {
+      "start": 236,
+      "end": 239.9804081632653,
+      "loop": false
+    },
+    "Peg_JesseReallyLikes": {
+      "start": 241,
+      "end": 242.91009070294785,
+      "loop": false
+    },
+    "Peg_JesseWantsFourth": {
+      "start": 244,
+      "end": 246.27185941043084,
+      "loop": false
+    },
+    "Peg_JesseWantsHalf": {
+      "start": 248,
+      "end": 249.97197278911565,
+      "loop": false
+    },
+    "Peg_JesseWantsPart": {
+      "start": 251,
+      "end": 253.550589569161,
+      "loop": false
+    },
+    "Peg_JesseWantsWhole": {
+      "start": 255,
+      "end": 257.18628117913835,
+      "loop": false
+    },
+    "Peg_LooksLikeEveryoneHasWanted": {
+      "start": 259,
+      "end": 262.5085487528345,
+      "loop": false
+    },
+    "Peg_MoraReallyLikes": {
+      "start": 264,
+      "end": 266.26251700680274,
+      "loop": false
+    },
+    "Peg_MoraWantsFourth": {
+      "start": 268,
+      "end": 269.9371201814059,
+      "loop": false
+    },
+    "Peg_MoraWantsHalf": {
+      "start": 271,
+      "end": 272.9062358276644,
+      "loop": false
+    },
+    "Peg_MoraWantsPart": {
+      "start": 274,
+      "end": 276.45167800453515,
+      "loop": false
+    },
+    "Peg_MoraWantsWhole": {
+      "start": 278,
+      "end": 280.1138775510204,
+      "loop": false
+    },
+    "Peg_Mushroom": {
+      "start": 282,
+      "end": 282.90113378684805,
+      "loop": false
+    },
+    "Peg_Mushrooms": {
+      "start": 284,
+      "end": 285.0660090702948,
+      "loop": false
+    },
+    "Peg_Olive": {
+      "start": 287,
+      "end": 287.69555555555553,
+      "loop": false
+    },
+    "Peg_Olives": {
+      "start": 289,
+      "end": 289.7715419501134,
+      "loop": false
+    },
+    "Peg_Onion": {
+      "start": 291,
+      "end": 291.92301587301586,
+      "loop": false
+    },
+    "Peg_Onions": {
+      "start": 293,
+      "end": 293.9327664399093,
+      "loop": false
+    },
+    "Peg_OrderUp": {
+      "start": 295,
+      "end": 297.07451247165534,
+      "loop": false
+    },
+    "Peg_Pepper": {
+      "start": 299,
+      "end": 299.6732879818594,
+      "loop": false
+    },
+    "Peg_Peppers": {
+      "start": 301,
+      "end": 302.217641723356,
+      "loop": false
+    },
+    "Peg_PigReallyWants": {
+      "start": 304,
+      "end": 306.22367346938773,
+      "loop": false
+    },
+    "Peg_PigWantsFourth": {
+      "start": 308,
+      "end": 310.28603174603177,
+      "loop": false
+    },
+    "Peg_PigWantsHalf": {
+      "start": 312,
+      "end": 313.9968253968254,
+      "loop": false
+    },
+    "Peg_PigWantsPart": {
+      "start": 315,
+      "end": 317.5075510204082,
+      "loop": false
+    },
+    "Peg_PigWantsWhole": {
+      "start": 319,
+      "end": 321.2564172335601,
+      "loop": false
+    },
+    "Peg_Pineapple": {
+      "start": 323,
+      "end": 324.2700453514739,
+      "loop": false
+    },
+    "Peg_Pineapples": {
+      "start": 326,
+      "end": 326.987052154195,
+      "loop": false
+    },
+    "Peg_RamoneReallyLikes": {
+      "start": 328,
+      "end": 330.19342403628116,
+      "loop": false
+    },
+    "Peg_RamoneWantsFourth": {
+      "start": 332,
+      "end": 334.22648526077097,
+      "loop": false
+    },
+    "Peg_RamoneWantsHalf": {
+      "start": 336,
+      "end": 338.371768707483,
+      "loop": false
+    },
+    "Peg_RamoneWantsPart": {
+      "start": 340,
+      "end": 342.662358276644,
+      "loop": false
+    },
+    "Peg_RamoneWantsWhole": {
+      "start": 344,
+      "end": 346.6655328798186,
+      "loop": false
+    },
+    "Peg_Right1": {
+      "start": 348,
+      "end": 349.2238095238095,
+      "loop": false
+    },
+    "Peg_Right2": {
+      "start": 351,
+      "end": 353.01562358276647,
+      "loop": false
+    },
+    "Peg_Right7": {
+      "start": 355,
+      "end": 355.8333560090703,
+      "loop": false
+    },
+    "Peg_Right8": {
+      "start": 357,
+      "end": 358,
+      "loop": false
+    },
+    "Peg_Right9": {
+      "start": 359,
+      "end": 360.53179138321997,
+      "loop": false
+    },
+    "Peg_Start1": {
+      "start": 362,
+      "end": 365.46319727891154,
+      "loop": false
+    },
+    "Peg_TessaReallyLikes": {
+      "start": 367,
+      "end": 368.9745351473923,
+      "loop": false
+    },
+    "Peg_TessaWantsFourth": {
+      "start": 370,
+      "end": 372.02414965986395,
+      "loop": false
+    },
+    "Peg_TessaWantsHalf": {
+      "start": 374,
+      "end": 376.02222222222224,
+      "loop": false
+    },
+    "Peg_TessaWantsPart": {
+      "start": 378,
+      "end": 380.5372335600907,
+      "loop": false
+    },
+    "Peg_TessaWantsWhole": {
+      "start": 382,
+      "end": 384.3680045351474,
+      "loop": false
+    },
+    "Peg_ThisFourthHas": {
+      "start": 386,
+      "end": 387.49095238095236,
+      "loop": false
+    },
+    "Peg_ThisFourthHasFewerToppings": {
+      "start": 389,
+      "end": 391.6145124716553,
+      "loop": false
+    },
+    "Peg_ThisFourthHasMoreToppings": {
+      "start": 393,
+      "end": 395.46993197278914,
+      "loop": false
+    },
+    "Peg_ThisHalfHas": {
+      "start": 397,
+      "end": 398.3387074829932,
+      "loop": false
+    },
+    "Peg_ThisHalfHasFewerToppings": {
+      "start": 400,
+      "end": 402.41707482993195,
+      "loop": false
+    },
+    "Peg_ThisHalfHasMoreToppings": {
+      "start": 404,
+      "end": 406.27142857142854,
+      "loop": false
+    },
+    "Peg_ThisTime2Customers": {
+      "start": 408,
+      "end": 411.4421088435374,
+      "loop": false
+    },
+    "Peg_ThisTime4Customers": {
+      "start": 413,
+      "end": 416.3041496598639,
+      "loop": false
+    },
+    "Peg_Tomato": {
+      "start": 418,
+      "end": 419.0786394557823,
+      "loop": false
+    },
+    "Peg_Tomatoes": {
+      "start": 421,
+      "end": 422.1832199546485,
+      "loop": false
+    },
+    "Peg_WereDividingPizzaInto2": {
+      "start": 424,
+      "end": 429.2899546485261,
+      "loop": false
+    },
+    "Peg_WereDividingPizzaInto4": {
+      "start": 431,
+      "end": 436.85201814058956,
+      "loop": false
+    },
+    "Peg_WhichAltogetherMakes": {
+      "start": 438,
+      "end": 439.7380045351474,
+      "loop": false
+    },
+    "Peg_Wrong1": {
+      "start": 441,
+      "end": 442.95215419501136,
+      "loop": false
+    },
+    "Peg_Wrong3": {
+      "start": 444,
+      "end": 445.4475510204082,
+      "loop": false
+    },
+    "Peg_Wrong4": {
+      "start": 447,
+      "end": 449.1257823129252,
+      "loop": false
+    },
+    "Pizza_Intro_Sound": {
+      "start": 451,
+      "end": 462.97555555555556,
+      "loop": false
+    },
+    "Pizza_Result_Sound": {
+      "start": 464,
+      "end": 471.89122448979595,
+      "loop": false
+    },
+    "Ramone_PizzaReward2": {
+      "start": 473,
+      "end": 474.1126530612245,
+      "loop": false
+    },
+    "SFX_PickUpTopping": {
+      "start": 476,
+      "end": 476.1225170068027,
+      "loop": false
+    },
+    "SFX_PlaceTopping": {
+      "start": 478,
+      "end": 478.4906802721088,
+      "loop": false
+    },
+    "SFX_Transition_Eating": {
+      "start": 480,
+      "end": 481.35938775510203,
+      "loop": false
+    },
+    "SFX_Transition_Slices": {
+      "start": 483,
+      "end": 483.6744444444444,
+      "loop": false
+    },
+    "Tessa_PizzaReward1": {
+      "start": 485,
+      "end": 486.3838321995465,
+      "loop": false
+    }
+  },
+  "autoplay": "silence"
+}

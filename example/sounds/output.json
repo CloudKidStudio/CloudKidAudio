@@ -1,0 +1,100 @@
+{
+  "resources": [
+	"sounds/output.m4a",
+	"sounds/output.ogg",
+	"sounds/output.mp3"
+  ],
+  "spritemap": {
+    "silence": {
+      "start": 0,
+      "end": 5,
+      "loop": true
+    },
+    "ahh": {
+      "start": 6,
+      "end": 7.5528344671201815,
+      "loop": false
+    },
+    "crazyApples": {
+      "start": 9,
+      "end": 11.16666666667,
+      "loop": true
+    },
+    "dam": {
+      "start": 19,
+      "end": 19.637891156462587,
+      "loop": true
+    },
+    "fishMuseum": {
+      "start": 21,
+      "end": 22.355396825396824,
+      "loop": true
+    },
+    "fishsplash": {
+      "start": 24,
+      "end": 25.34659863945578,
+      "loop": false
+    },
+    "GoodJob": {
+      "start": 27,
+      "end": 27.91655328798186,
+      "loop": false
+    },
+    "greatsplatting": {
+      "start": 29,
+      "end": 30.30031746031746,
+      "loop": false
+    },
+    "grunt04": {
+      "start": 32,
+      "end": 32.29823129251701,
+      "loop": false
+    },
+    "hey": {
+      "start": 34,
+      "end": 35.6950566893424,
+      "loop": false
+    },
+    "Hit": {
+      "start": 37,
+      "end": 37.02285714285714,
+      "loop": false
+    },
+    "hose": {
+      "start": 39,
+      "end": 39.7372335600907,
+      "loop": false
+    },
+    "kick": {
+      "start": 41,
+      "end": 42.07451247165533,
+      "loop": false
+    },
+    "scat": {
+      "start": 44,
+      "end": 46.16666667,
+      "loop": false
+    },
+    "SoundsLikeFun": {
+      "start": 54,
+      "end": 55.613242630385486,
+      "loop": false
+    },
+    "squirt": {
+      "start": 57,
+      "end": 57.37514739229025,
+      "loop": false
+    },
+    "whoa": {
+      "start": 59,
+      "end": 60.94467120181406,
+      "loop": false
+    },
+    "youdidit": {
+      "start": 62,
+      "end": 62.93895691609978,
+      "loop": false
+    }
+  },
+  "autoplay": "silence"
+}
