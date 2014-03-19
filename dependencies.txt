@@ -1,7 +1,0 @@
-EaselJS/lib/easeljs-0.6.1.min.js
-EaselJS/lib/movieclip-0.6.2.min.js
-PreloadJS/lib/preloadjs-0.3.2.min.js
-TweenJS/lib/tweenjs-0.4.1.min.js
-CloudKidOS/deploy/cloudkid-os-createjs.min.js
-CloudKidAnimation/deploy/cloudkid-animation.min.js
-CloudKidCaptions/deploy/cloudkid-captions.min.js
