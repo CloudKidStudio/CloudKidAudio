@@ -91,7 +91,7 @@
 		</sequential>
 	</macrodef>
 	
-	<target name="importExternalLibraries" description="Copy the files specified in dependencies.txt to libs.dir">
+	<target name="import-libs" description="Copy the files specified in dependencies.txt to libs.dir">
 		<fail unless="libs.dir" message="libs.dir needs to be specified in build.properties as the location to put external library SWC files" />
 		<fail unless="libs.root.dir" message="libs.root.dir needs to be specified in build.properties as the root directory that all external libraries are in" />
 		<fail unless="libs.imports" message="libs.imports needs to be specified in build.properties as the directory to output built files to" />
