@@ -5,7 +5,7 @@ HTML5 Audio API for CloudKidOS
 
 ##Documentation##
 
-http://cloudkidstudio.github.io/CloudKidSound/
+http://cloudkidstudio.github.io/CloudKidAudio/
 
 ##Installation##
 
