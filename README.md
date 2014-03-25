@@ -3,6 +3,10 @@ CloudKid Audio
 
 HTML5 Audio API for CloudKidOS
 
+##Documentation##
+
+http://cloudkidstudio.github.io/CloudKidSound/
+
 ##Installation##
 
 CloudKid Audio can be install using Bower.
