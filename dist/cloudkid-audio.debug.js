@@ -1,23 +1,23 @@
 !function(global, doc, undefined) {
     "use strict";
     var OS = cloudkid.OS, SwishSprite = cloudkid.SwishSprite, MediaLoader = cloudkid.MediaLoader, Audio = function(dataURLorObject, onReady) {
+        this._onUpdate = this._onUpdate.bind(this), this._onComplete = this._onComplete.bind(this), 
         this.initialize(dataURLorObject, onReady);
     }, p = Audio.prototype, _data = null, _destroyed = !1, _currentData = null, _currentAlias = null, _onFinish = null, _onUpdate = null, _paused = !1, _progress = 0, _muted = !1, _duration = 0, _silencePosition = 0, _updateAlias = "AudioMute", _updateSpriteAlias = "SwishSprite", _audioSprite = null, _instance = null;
-    Audio.VERSION = "1.0.0", Audio.init = function(dataURLorObject, onReady) {
+    Audio.VERSION = "1.0.1", Audio.init = function(dataURLorObject, onReady) {
         return _instance || new Audio(dataURLorObject, onReady), _instance;
     }, Object.defineProperty(Audio, "instance", {
         get: function() {
             return _instance;
         }
     }), p.initialize = function(dataURLorObject, onReady) {
-        return _instance ? (Debug.warn("Audio is already initialized, use Audio.instance"), 
-        void 0) : (_destroyed = !1, _instance = this, "object" == typeof dataURLorObject ? (Debug.log("Load the JSON object directly"), 
+        return _instance ? void Debug.warn("Audio is already initialized, use Audio.instance") : (_destroyed = !1, 
+        _instance = this, void ("object" == typeof dataURLorObject ? (Debug.log("Load the JSON object directly"), 
         validateData(dataURLorObject, onReady)) : "string" == typeof dataURLorObject ? (Debug.log("Load from the URL " + dataURLorObject), 
         MediaLoader.instance.load(dataURLorObject, function(result) {
-            return result && result.content ? (validateData(result.content, onReady), void 0) : (Debug.error("Unable to load the audio sprite data from url '" + dataUrl + "'"), 
-            onReady(!1), void 0);
-        })) : (Debug.error("Audio constructor data is not a URL or json object"), onReady(!1)), 
-        void 0);
+            return result && result.content ? void validateData(result.content, onReady) : (Debug.error("Unable to load the audio sprite data from url '" + dataUrl + "'"), 
+            void onReady(!1));
+        })) : (Debug.error("Audio constructor data is not a URL or json object"), onReady(!1))));
     };
     var validateData = function(data, callback) {
         _data = data;
@@ -38,13 +38,13 @@
     p.getAudioSprite = function() {
         return _audioSprite;
     }, p.load = function(callback) {
-        if (!_data) return Debug.error("Must load sprite data first."), void 0;
+        if (!_data) return void Debug.error("Must load sprite data first.");
         var i, resource, cacheManager = MediaLoader.instance.cacheManager, len = _data.resources.length;
         for (i = 0; len > i; i++) resource = _data.resources[i], _data.resources[i] = cacheManager.prepare(resource.url !== undefined ? resource.url : resource, !0);
-        _audioSprite = new SwishSprite(_data), _audioSprite.manualUpdate = !0;
+        _audioSprite || (_audioSprite = new SwishSprite(_data), _audioSprite.manualUpdate = !0);
         var self = this;
-        _audioSprite.on(SwishSprite.LOADED, function() {
-            _audioSprite.off(SwishSprite.LOADED).on(SwishSprite.PROGRESS, self._onUpdate.bind(self)).on(SwishSprite.COMPLETE, self._onComplete.bind(self)), 
+        _audioSprite.off(SwishSprite.LOADED), _audioSprite.on(SwishSprite.LOADED, function() {
+            _audioSprite.off(SwishSprite.LOADED).on(SwishSprite.PROGRESS, self._onUpdate).on(SwishSprite.COMPLETE, self._onComplete), 
             callback();
         }), OS.instance.addUpdateCallback(_updateSpriteAlias, _audioSprite.update), _audioSprite.load();
     }, p.prepare = function(alias) {

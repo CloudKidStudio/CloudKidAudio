@@ -13,6 +13,8 @@
 	*/
 	var Audio = function(dataURLorObject, onReady)
 	{
+		this._onUpdate = this._onUpdate.bind(this);
+		this._onComplete = this._onComplete.bind(this);
 		this.initialize(dataURLorObject, onReady);
 	},
 	
@@ -321,15 +323,19 @@
 		}
 		
 		// Create the new audio sprite
-		_audioSprite = new SwishSprite(_data);
-		_audioSprite.manualUpdate = true;
+		if(!_audioSprite)
+		{
+			_audioSprite = new SwishSprite(_data);
+			_audioSprite.manualUpdate = true;
+		}
 
 		// Add listener for the Loaded event
 		var self = this;
+		_audioSprite.off(SwishSprite.LOADED);
 		_audioSprite.on(SwishSprite.LOADED, function(){
 			_audioSprite.off(SwishSprite.LOADED)
-				.on(SwishSprite.PROGRESS, self._onUpdate.bind(self))
-				.on(SwishSprite.COMPLETE, self._onComplete.bind(self));			
+				.on(SwishSprite.PROGRESS, self._onUpdate)
+				.on(SwishSprite.COMPLETE, self._onComplete);
 			callback();
 		});
 		
