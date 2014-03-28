@@ -128,7 +128,14 @@
 	* @private
 	* @property {cloudkid.Audio} _instance
 	*/
-	_instance = null;
+	_instance = null,
+
+	/** 
+	* The currently playing (and thus valid) AudioInst object.
+	* @property {AudioInst} _currentInst
+	* @private
+	*/
+	_currentInst = null;
 	
 	/** 
 	* The global version of the library 
@@ -427,7 +434,7 @@
 	*/
 	p.play = function(alias, onFinish, onUpdate)
 	{
-		if (!isReady(alias)) return;
+		if (!isReady(alias)) return null;
 		
 		if(!_paused) this.stop();
 		
@@ -451,7 +458,12 @@
 		else
 		{
 			this._playAudio();
-		}		
+		}
+		var inst = _currentInst = new AudioInst();
+		inst._end = _currentData.end * 1000;
+		inst._start = _currentData.start * 1000;
+		inst.length = inst._end - inst._start;
+		return inst;
 	};
 	
 	/**
@@ -588,6 +600,11 @@
 		_currentData = null;
 		_paused = true;
 		_duration = 0;
+		if(_currentInst)
+		{
+			_currentInst.isValid = false;
+			_currentInst = null;
+		}
 		
 		// cancel the update if it's running
 		this._stopSilence();
@@ -739,6 +756,90 @@
 		_onFinish = null;
 		
 		_destroyed = true;
+	};
+
+	/**
+	*  A playing instance of a sound. This class is primarily for compatability/standardization with CloudKidSound,
+	*  and to make syncing animation with audio easier. These can only be created through cloudkid.Audio.instance.play().
+	*  @class AudioInst
+	*/
+	var AudioInst = function()
+	{
+		/**
+		*	If this AudioInst is still valid (still the actively playing audio bit).
+		*	If this is false, then Audio is no longer playing this sound and this object should be discarded.
+		*	@property {bool} isValid
+		*	@public
+		*/
+		this.isValid = true;
+		/**
+		*	The start time of the sound in milliseconds.
+		*	@property {Number} _start
+		*	@private
+		*/
+		this._start = 0;
+		/**
+		*	The end time of the sound in milliseconds.
+		*	@property {Number} _end
+		*	@private
+		*/
+		this._end = 0;
+		/**
+		*	The length of the sound in milliseconds.
+		*	@property {Number} length
+		*	@public
+		*/
+		this.length = 0;
+	};
+
+	/**
+	*	The position of the sound playhead in milliseconds, or 0 if the AudioInst is no longer valid.
+	*	@property {Number} position
+	*	@public
+	*/
+	Object.defineProperty(AudioInst.prototype, "position", {
+		get: function() {
+			return (this.isValid && _audioSprite) ? (_muted ? _silencePosition * 1000 : _audioSprite.getPosition() * 1000 - this._start) : 0;
+		}
+	});
+
+	/**
+	*	Stops Audio, if this AudioInst is still valid.
+	*	@method stop
+	*	@public
+	*/
+	AudioInst.prototype.stop()
+	{
+		if(this.isValid)
+		{
+			_instance.stop();
+		}
+	};
+
+	/**
+	*	Pauses Audio, if this AudioInst is still valid.
+	*	@method pause
+	*	@public
+	*/
+	AudioInst.prototype.pause()
+	{
+		if(this.isValid)
+		{
+			_instance.pause();
+		}
+	};
+
+	/**
+	*	Resumes playing Audio, if this AudioInst is still valid.
+	*	@method unpause
+	*	@public
+	*/
+	AudioInst.prototype.unpause()
+	{
+		if(this.isValid)
+		{
+			_instance.resume();
+		}
 	};
 	
 	// Assign to the cloudkid namespace
