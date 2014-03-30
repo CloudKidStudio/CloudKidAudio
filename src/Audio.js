@@ -430,9 +430,11 @@
 	*  @public
 	*  @param {String} alias Name of sound to play
 	*  @param {Function} onFinish Function called when the sound is done
+	*  @param {Function} onStart Function to be called when playback starts.
+	*		This is called immediately, and is here to provide compatibility in usage with cloudkid.Sound.
 	*  @param {Function} onUpdate Function to return the current progress amount 0 to 1
 	*/
-	p.play = function(alias, onFinish, onUpdate)
+	p.play = function(alias, onFinish, onStart, onUpdate)
 	{
 		if (!isReady(alias)) return null;
 		
@@ -463,6 +465,9 @@
 		inst._end = _currentData.end * 1000;
 		inst._start = _currentData.start * 1000;
 		inst.length = inst._end - inst._start;
+		
+		setTimeout(onStart, 0);//call onStart ASAP after function returns the AudioInst
+		
 		return inst;
 	};
 	
