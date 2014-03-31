@@ -816,7 +816,7 @@
 	*/
 	Object.defineProperty(AudioInst.prototype, "position", {
 		get: function() {
-			return (this.isValid && _audioSprite) ? (_muted ? _silencePosition * 1000 : _audioSprite.getPosition() * 1000 - this._start) : 0;
+			return (this.isValid && _audioSprite) ? (_muted ? _silencePosition * 1000 : _audioSprite.getPosition() * 1000) : 0;
 		}
 	});
 

@@ -4,7 +4,7 @@
         this._onUpdate = this._onUpdate.bind(this), this._onComplete = this._onComplete.bind(this), 
         this.initialize(dataURLorObject, onReady);
     }, p = Audio.prototype, _data = null, _destroyed = !1, _currentData = null, _currentAlias = null, _onFinish = null, _onUpdate = null, _paused = !1, _progress = 0, _muted = !1, _duration = 0, _silencePosition = 0, _updateAlias = "AudioMute", _updateSpriteAlias = "SwishSprite", _audioSprite = null, _instance = null, _currentInst = null;
-    Audio.VERSION = "1.0.1", Audio.init = function(dataURLorObject, onReady) {
+    Audio.VERSION = "2.0.0", Audio.init = function(dataURLorObject, onReady) {
         return _instance || new Audio(dataURLorObject, onReady), _instance;
     }, Object.defineProperty(Audio, "instance", {
         get: function() {
@@ -115,7 +115,7 @@
     };
     Object.defineProperty(AudioInst.prototype, "position", {
         get: function() {
-            return this.isValid && _audioSprite ? _muted ? 1e3 * _silencePosition : 1e3 * _audioSprite.getPosition() - this._start : 0;
+            return this.isValid && _audioSprite ? _muted ? 1e3 * _silencePosition : 1e3 * _audioSprite.getPosition() : 0;
         }
     }), AudioInst.prototype.stop = function() {
         this.isValid && _instance.stop();
