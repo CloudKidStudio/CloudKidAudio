@@ -706,6 +706,18 @@
 	};
 
 	/** 
+	* Returns if a sound alias is in the spritemap.
+	* @public
+	* @method hasAlias
+	* @param {String} alias The sound alias to check for.
+	* @return {Bool} true if the alias is in the spritemap, false otherwise.
+	*/
+	p.hasAlias = function(alias)
+	{
+		return _data ? false : !!_data.spritemap[alias];
+	}
+
+	/** 
 	* Returns array of sound aliases in spritemap
 	* @public
 	* @method getAliases
