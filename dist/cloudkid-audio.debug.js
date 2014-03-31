@@ -3,7 +3,7 @@
     var OS = cloudkid.OS, SwishSprite = cloudkid.SwishSprite, MediaLoader = cloudkid.MediaLoader, Audio = function(dataURLorObject, onReady) {
         this._onUpdate = this._onUpdate.bind(this), this._onComplete = this._onComplete.bind(this), 
         this.initialize(dataURLorObject, onReady);
-    }, p = Audio.prototype, _data = null, _destroyed = !1, _currentData = null, _currentAlias = null, _onFinish = null, _onUpdate = null, _paused = !1, _progress = 0, _muted = !1, _duration = 0, _silencePosition = 0, _updateAlias = "AudioMute", _updateSpriteAlias = "SwishSprite", _audioSprite = null, _instance = null;
+    }, p = Audio.prototype, _data = null, _destroyed = !1, _currentData = null, _currentAlias = null, _onFinish = null, _onUpdate = null, _paused = !1, _progress = 0, _muted = !1, _duration = 0, _silencePosition = 0, _updateAlias = "AudioMute", _updateSpriteAlias = "SwishSprite", _audioSprite = null, _instance = null, _currentInst = null;
     Audio.VERSION = "1.0.1", Audio.init = function(dataURLorObject, onReady) {
         return _instance || new Audio(dataURLorObject, onReady), _instance;
     }, Object.defineProperty(Audio, "instance", {
@@ -57,10 +57,13 @@
     }, p.resume = function() {
         _paused && _audioSprite && _currentData && (_muted ? this._startSilence() : _audioSprite.resume(), 
         _paused = !1);
-    }, p.play = function(alias, onFinish, onUpdate) {
-        isReady(alias) && (_paused || this.stop(), _currentAlias = alias, _currentData = _data.spritemap[alias], 
+    }, p.play = function(alias, onFinish, onStart, onUpdate) {
+        return isReady(alias) ? (_paused || this.stop(), _currentAlias = alias, _currentData = _data.spritemap[alias], 
         _onFinish = onFinish || null, _onUpdate = onUpdate || null, _paused = !1, _progress = 0, 
-        _silencePosition = 0, _muted ? this._playSilence() : this._playAudio());
+        _silencePosition = 0, _muted ? this._playSilence() : this._playAudio(), _currentInst = new AudioInst(), 
+        _currentInst._end = 1e3 * _currentData.end, _currentInst._start = 1e3 * _currentData.start, 
+        _currentInst.length = _currentInst._end - _currentInst._start, setTimeout(onStart, 0), 
+        _currentInst) : null;
     }, p._playSilence = function() {
         _duration = this.getLength(_currentAlias), _silencePosition = _audioSprite.getPosition(), 
         _onUpdate && _onUpdate(_progress), this._startSilence();
@@ -81,7 +84,8 @@
         _currentData && (_currentData.loop ? (_progress = 0, _silencePosition = 0, _onFinish && _onFinish()) : this.stop(!0));
     }, p.stop = function(doCallback) {
         _progress = 0, _silencePosition = 0, _onUpdate = null, _currentAlias = null, _currentData = null, 
-        _paused = !0, _duration = 0, this._stopSilence();
+        _paused = !0, _duration = 0, _currentInst && (_currentInst.isValid = !1, _currentInst = null), 
+        this._stopSilence();
         var callback = _onFinish;
         _onFinish = null, _audioSprite && _audioSprite.stop(), doCallback === undefined && (doCallback = !1), 
         doCallback && null !== callback && callback();
@@ -95,6 +99,8 @@
         return _muted;
     }, p.isLooping = function(alias) {
         return isReady(alias) ? _data.spritemap[alias].loop : void 0;
+    }, p.hasAlias = function(alias) {
+        return _data ? !!_data.spritemap[alias] : !1;
     }, p.getAliases = function(includeSilence) {
         var key, map = [];
         if (includeSilence) for (key in _data.spritemap) map.push(key); else for (key in _data.spritemap) "silence" != key && map.push(key);
@@ -103,78 +109,64 @@
         _destroyed || (this.stop(), _audioSprite && (OS.instance.removeUpdateCallback(_updateSpriteAlias), 
         _audioSprite.destroy()), _instance = _audioSprite = _data = _currentData = _currentAlias = _onUpdate = _onFinish = null, 
         _destroyed = !0);
+    };
+    var AudioInst = function() {
+        this.isValid = !0, this._start = 0, this._end = 0, this.length = 0;
+    };
+    Object.defineProperty(AudioInst.prototype, "position", {
+        get: function() {
+            return this.isValid && _audioSprite ? _muted ? 1e3 * _silencePosition : 1e3 * _audioSprite.getPosition() - this._start : 0;
+        }
+    }), AudioInst.prototype.stop = function() {
+        this.isValid && _instance.stop();
+    }, AudioInst.prototype.pause = function() {
+        this.isValid && _instance.pause();
+    }, AudioInst.prototype.unpause = function() {
+        this.isValid && _instance.resume();
     }, namespace("cloudkid").Audio = Audio;
-}(window, document), function(undefined) {
-    "use strict";
-    var Audio = cloudkid.Audio, OS = cloudkid.OS, Captions = cloudkid.Captions, Animator = cloudkid.Animator, PageVisibility = cloudkid.PageVisibility, AudioAnimation = function(movieClip, soundAlias, frameLabel, numLoops, soundStartFrame) {
-        this.initialize(movieClip, soundAlias, frameLabel, numLoops, soundStartFrame);
-    }, p = AudioAnimation.prototype, _audio = null, _audioAnims = 0;
-    p._clip = null, p._visibility = null, p._audioAlias = null, p._frameLabel = null, 
-    p._animStartFrame = 0, p._animEndFrame = null, p._animDuration = 0, p._audioStartFrame = 0, 
-    p._audioDuration = 0, p._audioStarted = !1, p._animationFPS = 24, p._totalLoops = 1, 
-    p._currentLoop = 0, p._lastProgress = 0, p.paused = !1, p._animation = null, p._playCompleteCallback = null, 
-    p._audioDone = !1, p._animDone = !1, p._syncDiff = 2, p._handleCaptions = !1, p._captionUpdate = null, 
-    p.initialize = function(movieClip, soundAlias, frameLabel, numLoops, soundStartFrame) {
-        this._clip = movieClip, this._audioAlias = soundAlias, this._frameLabel = frameLabel === undefined ? null : frameLabel, 
-        this._totalLoops = numLoops === undefined ? 1 : numLoops, null !== this._frameLabel ? (this._animStartFrame = this._clip.timeline.resolve(this._frameLabel), 
-        1 == this._totalLoops ? (this._animEndFrame = this._clip.timeline.resolve(this._frameLabel + "_stop"), 
-        this._animEndFrame === undefined && (this._animEndFrame = this._clip.timeline.resolve(this._frameLabel + "_loop"))) : (this._animEndFrame = this._clip.timeline.resolve(this._frameLabel + "_loop"), 
-        this._animEndFrame === undefined && (this._animEndFrame = this._clip.timeline.resolve(this._frameLabel + "_stop")))) : this._animEndFrame = this._clip.timeline.duration - 1, 
-        this._audioStartFrame = soundStartFrame === undefined ? this._animStartFrame : soundStartFrame, 
-        this._animDuration = this._animEndFrame - this._animStartFrame, null === _audio && (_audio = Audio.instance), 
-        _audioAnims++, this._animationFPS = OS.instance.fps, this._audioDuration = Math.round(_audio.getLength(this._audioAlias) * this._animationFPS), 
-        this._audioDuration != this._animDuration && _audio.isLooping(this._audioAlias) && Debug.warn("The sound '" + this._audioAlias + "' and animation '" + this._frameLabel + "' aren't the same length (sound: " + this._audioDuration + ", animation: " + this._animDuration + ")");
-        var self = this, autoPaused = -1;
-        this._visibility = new PageVisibility(function() {
-            0 === autoPaused && self._animation && self._animation.setPaused(!1), autoPaused = -1;
-        }, function() {
-            -1 === autoPaused && (autoPaused = self.paused ? 1 : 0), self._animation && self._animation.setPaused(!0);
-        });
-    }, p.play = function(callback) {
-        _audio.stop(), this._playCompleteCallback = callback !== undefined ? callback : null, 
-        this._currentLoop = 1, this._handleCaptions = Captions && Captions.instance && Captions.instance.hasCaption(this._audioAlias), 
-        this._captionUpdate = this._handleCaptions ? Captions.instance.run(this._audioAlias) : null, 
-        this._startPlayback();
-    }, p._startPlayback = function() {
-        this._animation = null, this._lastProgress = 0, this._audioDone = !1, this._animDone = !1, 
-        this.paused = !1, this._audioStartFrame <= this._animStartFrame + this._syncDiff ? (this._audioStarted = !0, 
-        this._animation = Animator.play(this._clip, this._frameLabel, this._animationFinished.bind(this), null, !0), 
-        _audio.play(this._audioAlias, this._audioFinished.bind(this), this._update.bind(this))) : (Debug.log("Delay starting sound because of frame offset"), 
-        this._clip.timeline.addEventListener("change", this._onFrameUpdate.bind(this)), 
-        _audio.prepare(this._audioAlias), this._audioStarted = !1, this._animation = Animator.play(this._clip, this._frameLabel, this._animationFinished.bind(this), null, !0));
-    }, p._audioFinished = function() {
-        !this._animDone && this._animation && this._animation.getPaused() && this._animation.setPaused(!1), 
-        this._audioDone = !0, this._doneCheck();
-    }, p._animationFinished = function() {
-        this._animation && (this._animation.onComplete = null), this._animDone = !0, this._doneCheck();
-    }, p.pause = function() {
-        this.paused || (this.paused = !0, _audio.pause(), this._animation && this._animation.setPaused(!0));
-    }, p.resume = function() {
-        this.paused && (this.paused = !1, _audio.resume(), this._animation && this._animation.setPaused(!1));
-    }, p.stop = function(doCallback) {
-        _audio.stop(), Animator.stop(this._clip), this.paused = !0, this._animation = null, 
-        doCallback = doCallback === undefined ? !1 : doCallback, this._playCompleteCallback && doCallback && this._playCompleteCallback(), 
-        this._playCompleteCallback = null;
-    }, p._doneCheck = function() {
-        if (this._animDone && this._audioDone) {
-            var infinite = 0 === this._totalLoops;
-            infinite || this._totalLoops > 1 ? infinite || this._currentLoop < this._totalLoops ? (Animator.stop(this._clip), 
-            this._currentLoop++, this._startPlayback()) : this.stop(!0) : this.stop(!0);
+}(window, document), function() {
+    var VOPlayer = function(useCaptions) {
+        this._audioListener = this._onAudioFinished.bind(this), this._update = this._update.bind(this), 
+        this._updateCaptionPos = this._updateCaptionPos.bind(this), useCaptions && (this.captions = new cloudkid.Captions(null, !0)), 
+        this._listHelper = [];
+    }, p = VOPlayer.prototype = {};
+    p.audioList = null, p._listCounter = 0, p._currentAudio = null, p._audioInst = null, 
+    p._callback = null, p._audioListener = null, p._timer = 0, p.captions = null, p._listHelper = null, 
+    Object.defineProperty(p, "playing", {
+        get: function() {
+            return null !== this._currentAudio || this._timer > 0;
         }
-    }, p._update = function(progress) {
-        if (!this.paused && (this._captionUpdate && this._captionUpdate(progress), progress > this._lastProgress)) {
-            if (1 == progress && 0 === this._lastProgress) return;
-            if (this._lastProgress = progress, this._animDone) return;
-            var soundPos = parseInt(this._audioStartFrame, 10) + Math.round(this._audioDuration * this._lastProgress), clipPos = this._clip.timeline.position;
-            soundPos > clipPos ? (this._animation.getPaused() && this._animation.setPaused(!1), 
-            soundPos > this._animEndFrame ? this._animationFinished() : this._clip.gotoAndPlay(soundPos)) : soundPos + this._syncDiff < clipPos && 1 != this._lastProgress && this._animation.setPaused(!0);
-        }
-    }, p._onFrameUpdate = function() {
-        Debug.log("Anim Position: " + this._clip.timeline.position), !this._audioStarted && this._clip.timeline.position >= this._audioStartFrame && (this._audioStarted = !0, 
-        _audio.play(this._audioAlias, this._audioFinished.bind(this), this._update.bind(this)), 
-        this._clip.timeline.removeAllEventListeners());
+    }), p.play = function(id, callback) {
+        this.stop(), this._listCounter = -1, this._listHelper[0] = id, this.audioList = this._listHelper, 
+        this._callback = callback, this._onAudioFinished();
+    }, p.playList = function(list, callback) {
+        this.stop(), this._listCounter = -1, this.audioList = list, this._callback = callback, 
+        this._onAudioFinished();
+    }, p._onAudioFinished = function() {
+        if (cloudkid.OS.instance.removeUpdateCallback("VOPlayer"), this.captions && this._audioInst && this.captions.seek(this._audioInst.length), 
+        this._audioInst = null, this._listCounter++, this._listCounter >= this.audioList.length) {
+            this.captions && this.captions.stop(), this._currentAudio = null;
+            var c = this._callback;
+            this._callback = null, c && c();
+        } else this._currentAudio = this.audioList[this._listCounter], "string" == typeof this._currentAudio ? this._playAudio() : "function" == typeof this._currentAudio ? (this._currentAudio(), 
+        this._onAudioFinished()) : (this._timer = this._currentAudio, this._currentAudio = null, 
+        cloudkid.OS.instance.addUpdateCallback("VOPlayer", this._update));
+    }, p._update = function(elapsed) {
+        this.captions && this.captions.updateTime(elapsed), this._timer -= elapsed, this._timer <= 0 && this._onAudioFinished();
+    }, p._updateCaptionPos = function() {
+        this._audioInst && this.captions.seek(this._audioInst.position);
+    }, p._playAudio = function() {
+        var s = cloudkid.Audio.instance;
+        !s.hasAlias(this._currentAudio) && this.captions && this.captions.hasCaption(this._currentAudio) ? (this.captions.run(this._currentAudio), 
+        this._timer = this.captions.currentDuration, this._currentAudio = null, cloudkid.OS.instance.addUpdateCallback("VOPlayer", this._update)) : (this._audioInst = s.play(this._currentAudio, this._audioListener), 
+        this.captions && (this.captions.run(this._currentAudio), cloudkid.OS.instance.addUpdateCallback("VOPlayer", this._updateCaptionPos)));
+    }, p.stop = function() {
+        this._currentAudio && (cloudkid.Audio.instance.stop(), this._currentAudio = null, 
+        this._callback = null), this.captions && this.captions.stop(), cloudkid.OS.instance.removeUpdateCallback("VOPlayer"), 
+        this.audioList = null, this._timer = 0;
     }, p.destroy = function() {
-        _audioAnims--, 0 === _audioAnims && (_audio = null), this._visibility && this._visibility.destroy(), 
-        this._visibility = this._clip = this._audioAlias = this._totalLoops = this._frameLabel = this._animStartFrame = this._animEndFrame = this._animDuration = this._totalLoops = this._currentLoop = this._lastProgress = this._animation = null;
-    }, namespace("cloudkid").AudioAnimation = AudioAnimation;
+        this.stop(), this.audioList = null, this._listHelper = null, this._currentAudio = null, 
+        this._audioInst = null, this._callback = null, this._audioListener = null, this.captions && (this.captions.destroy(), 
+        this.captions = null);
+    }, namespace("cloudkid").VOPlayer = VOPlayer;
 }();

@@ -128,7 +128,14 @@
 	* @private
 	* @property {cloudkid.Audio} _instance
 	*/
-	_instance = null;
+	_instance = null,
+
+	/** 
+	* The currently playing (and thus valid) AudioInst object.
+	* @property {AudioInst} _currentInst
+	* @private
+	*/
+	_currentInst = null;
 	
 	/** 
 	* The global version of the library 
@@ -423,11 +430,13 @@
 	*  @public
 	*  @param {String} alias Name of sound to play
 	*  @param {Function} onFinish Function called when the sound is done
+	*  @param {Function} onStart Function to be called when playback starts.
+	*		This is called immediately, and is here to provide compatibility in usage with cloudkid.Sound.
 	*  @param {Function} onUpdate Function to return the current progress amount 0 to 1
 	*/
-	p.play = function(alias, onFinish, onUpdate)
+	p.play = function(alias, onFinish, onStart, onUpdate)
 	{
-		if (!isReady(alias)) return;
+		if (!isReady(alias)) return null;
 		
 		if(!_paused) this.stop();
 		
@@ -451,7 +460,15 @@
 		else
 		{
 			this._playAudio();
-		}		
+		}
+		_currentInst = new AudioInst();
+		_currentInst._end = _currentData.end * 1000;
+		_currentInst._start = _currentData.start * 1000;
+		_currentInst.length = _currentInst._end - _currentInst._start;
+		
+		setTimeout(onStart, 0);//call onStart ASAP after function returns the AudioInst
+		
+		return _currentInst;
 	};
 	
 	/**
@@ -588,6 +605,11 @@
 		_currentData = null;
 		_paused = true;
 		_duration = 0;
+		if(_currentInst)
+		{
+			_currentInst.isValid = false;
+			_currentInst = null;
+		}
 		
 		// cancel the update if it's running
 		this._stopSilence();
@@ -684,6 +706,18 @@
 	};
 
 	/** 
+	* Returns if a sound alias is in the spritemap.
+	* @public
+	* @method hasAlias
+	* @param {String} alias The sound alias to check for.
+	* @return {Bool} true if the alias is in the spritemap, false otherwise.
+	*/
+	p.hasAlias = function(alias)
+	{
+		return _data ? !!_data.spritemap[alias] : false;
+	};
+
+	/** 
 	* Returns array of sound aliases in spritemap
 	* @public
 	* @method getAliases
@@ -740,602 +774,358 @@
 		
 		_destroyed = true;
 	};
+
+	/**
+	*  A playing instance of a sound. This class is primarily for compatability/standardization with CloudKidSound,
+	*  and to make syncing animation with audio easier. These can only be created through cloudkid.Audio.instance.play().
+	*  @class AudioInst
+	*/
+	var AudioInst = function()
+	{
+		/**
+		*	If this AudioInst is still valid (still the actively playing audio bit).
+		*	If this is false, then Audio is no longer playing this sound and this object should be discarded.
+		*	@property {bool} isValid
+		*	@public
+		*/
+		this.isValid = true;
+		/**
+		*	The start time of the sound in milliseconds.
+		*	@property {Number} _start
+		*	@private
+		*/
+		this._start = 0;
+		/**
+		*	The end time of the sound in milliseconds.
+		*	@property {Number} _end
+		*	@private
+		*/
+		this._end = 0;
+		/**
+		*	The length of the sound in milliseconds.
+		*	@property {Number} length
+		*	@public
+		*/
+		this.length = 0;
+	};
+
+	/**
+	*	The position of the sound playhead in milliseconds, or 0 if the AudioInst is no longer valid.
+	*	@property {Number} position
+	*	@public
+	*/
+	Object.defineProperty(AudioInst.prototype, "position", {
+		get: function() {
+			return (this.isValid && _audioSprite) ? (_muted ? _silencePosition * 1000 : _audioSprite.getPosition() * 1000 - this._start) : 0;
+		}
+	});
+
+	/**
+	*	Stops Audio, if this AudioInst is still valid.
+	*	@method stop
+	*	@public
+	*/
+	AudioInst.prototype.stop = function()
+	{
+		if(this.isValid)
+		{
+			_instance.stop();
+		}
+	};
+
+	/**
+	*	Pauses Audio, if this AudioInst is still valid.
+	*	@method pause
+	*	@public
+	*/
+	AudioInst.prototype.pause = function()
+	{
+		if(this.isValid)
+		{
+			_instance.pause();
+		}
+	};
+
+	/**
+	*	Resumes playing Audio, if this AudioInst is still valid.
+	*	@method unpause
+	*	@public
+	*/
+	AudioInst.prototype.unpause = function()
+	{
+		if(this.isValid)
+		{
+			_instance.resume();
+		}
+	};
 	
 	// Assign to the cloudkid namespace
 	namespace('cloudkid').Audio = Audio;
 	
 }(window, document));
-(function(undefined){
+(function() {
+	/**
+	*	A class for managing audio by only playing one at a time, playing a list, and even
+	*	managing captions (CloudKidCaptions library) at the same time.
+	*	@class cloudkid.VOPlayer
+	*	@constructor
+	*	@param {bool} useCaptions If a cloudkid.Captions object should be created for use.
+	*/
+	var VOPlayer = function(useCaptions)
+	{
+		this._audioListener = this._onAudioFinished.bind(this);
+		this._update = this._update.bind(this);
+		this._updateCaptionPos = this._updateCaptionPos.bind(this);
+		if(useCaptions)
+			this.captions = new cloudkid.Captions(null, true);
+		this._listHelper = [];
+	};
 	
-	"use strict";
-	
-	// Imports
-	var Audio = cloudkid.Audio,
-		OS = cloudkid.OS,
-		Captions = cloudkid.Captions,
-		Animator = cloudkid.Animator,
-		PageVisibility = cloudkid.PageVisibility;
+	var p = VOPlayer.prototype = {};
 	
 	/**
-	*   AudioAnimation Handles playback of a single MovieClip in sync with a sound managed by cloudkid.Audio
-	*	@class cloudkid.AudioAnimation
-	*   @constructor
-	*   @param {createjs.MovieClip} movieClip the animation to sync with sound
-	*	@param {String} soundAlias the name of the sound to play with MovieClip
-	*	@param {String*} frameLabel the alias of the animation sequence to sync with sound 
-	*		Leave blank (or null) to play whole movieClip
-	*	@param {Number*} numLoops the number of times to play the synced animation when play() is called. 
-	*		value of 0 loops forever. Leave blank to play 1 time (or set as 1)
-	*	@param {Number*} soundStartFrame frame number on which synced sound starts 
-	*       (EaselJS frame numbers start at "0" where flash is "1")
+	*	The current list of audio/silence times/functions. Generally you will not need to modify this.
+	*	@property {Array} audioList
+	*	@public
 	*/
-	var AudioAnimation = function(movieClip, soundAlias, frameLabel, numLoops, soundStartFrame)
+	p.audioList = null;
+	/**
+	*	The current position in audioList.
+	*	@property {int} _listCounter
+	*	@private
+	*/
+	p._listCounter = 0;
+	/**
+	*	The current audio alias being played.
+	*	@property {String} _currentAudio
+	*	@private
+	*/
+	p._currentAudio = null;
+	/**
+	*	The current audio instance being played.
+	*	@property {SoundInst} _audioInst
+	*	@private
+	*/
+	p._audioInst = null;
+	/**
+	*	The callback for when the list is finished.
+	*	@property {function} _callback
+	*	@private
+	*/
+	p._callback = null;
+	/**
+	*	The bound _onAudioFinished call.
+	*	@property {function} _audioListener
+	*	@private
+	*/
+	p._audioListener = null;
+	/**
+	*	A timer for silence entries in the list, in milliseconds.
+	*	@property {int} _timer
+	*	@private
+	*/
+	p._timer = 0;
+	/**
+	*	The cloudkid.Captions object used for captions. The developer is responsible for initializing this with a captions
+	*	dictionary config file and a reference to a text field.
+	*	@property {cloudkid.Captions} captions
+	*	@public
+	*/
+	p.captions = null;
+	/**
+	*	An Array used when play() is called to avoid creating lots of Array objects.
+	*	@property {Array} _listHelper
+	*	@private
+	*/
+	p._listHelper = null;
+	
+	/**
+	*	If VOPlayer is currently playing (audio or silence).
+	*	@property {bool} playing
+	*	@public
+	*	@readOnly
+	*/
+	Object.defineProperty(p, "playing",
 	{
-		this.initialize(movieClip, soundAlias, frameLabel, numLoops, soundStartFrame);
-	},
+		get: function() { return this._currentAudio !== null || this._timer > 0; }
+	});
 	
-	// Reference to the prototype 
-	p = AudioAnimation.prototype,
-	
-	/** 
-	* Referece to current instance of Audio 
-	* @private
-	* @property {cloudkid.Audio}
+	/**
+	*	Plays a single audio alias, interrupting any current playback.
+	*	@method play
+	*	@public
+	*	@param {String} id The alias of the audio file to play.
+	*	@param {function} callback The function to call when playback is complete.
 	*/
-	_audio = null,
+	p.play = function(id, callback)
+	{
+		this.stop();
+		
+		this._listCounter = -1;
+		this._listHelper[0] = id;
+		this.audioList = this._listHelper;
+		this._callback = callback;
+		this._onAudioFinished();
+	};
 	
-	/** 
-	* The current number of sound animations created 
-	* @private
-	* @property {int}
-	* @default 0
+	/**
+	*	Plays a list of audio files, timers, and/or functions, interrupting any current playback.
+	*	Audio in the list will be preloaded to minimize pauses for loading.
+	*	@method playList
+	*	@public
+	*	@param {Array} list The array of items to play/call in order.
+	*	@param {function} callback The function to call when playback is complete.
 	*/
-	_audioAnims = 0;
+	p.playList = function(list, callback)
+	{
+		this.stop();
 
-	
-	/** 
-	* The MovieClip to sync with sound 
-	* @private
-	* @property {createjs.MovieClip} _clip
-	*/
-	p._clip = null;
-	
-	/** 
-	* The page visibility detector 
-	* @private
-	* @property {cloudkid.PageVisibility} _visibility
-	*/
-	p._visibility = null;
-	
-	/** 
-	* Name of the sound tp sync MovieClip to
-	* @private
-	* @property {String} _audioAlias
-	*/
-	p._audioAlias = null;
-	
-	/** 
-	* Label of animation sequence to sync 
-	* @private
-	* @property {String} _frameLabel
-	*/
-	p._frameLabel = null;
-	
-	/** 
-	* Numeric first frame of MovieClip in this animation sequence 
-	* @private
-	* @property {int} _animStartFrame
-	*/
-	p._animStartFrame = 0;
+		this._listCounter = -1;
+		this.audioList = list;
+		this._callback = callback;
+		this._onAudioFinished();
+	};
 	
 	/**
-	* Numeric last frame of MovieClip in this animation sequence 
-	* @private
-	* @property {int} _animEndFrame
+	*	Callback for when audio/timer is finished to advance to the next item in the list.
+	*	@method _onAudioFinished
+	*	@private
 	*/
-	p._animEndFrame = null;
-	
-	/** 
-	* Number of frames in sequence 
-	* @private
-	* @property {int} _animDuration
-	*/
-	p._animDuration = 0;
-	
-	/** 
-	* TweenJS Timeline Frame to start sound 
-	* @private
-	* @property {int} _audioStartFrame
-	*/
-	p._audioStartFrame = 0;
-	
-	/** 
-	* Length of sound in frames 
-	* @private
-	* @property {int} _audioDuration
-	*/
-	p._audioDuration = 0;
-	
-	/** 
-	* Has the sound started playing yet? 
-	* @private
-	* @property {Bool} _audioStarted
-	* @default false
-	*/
-	p._audioStarted = false;
-	
-	/** 
-	* Target frames per second of MovieClip 
-	* @private
-	* @property {int} _animationFPS
-	* @default 24
-	*/
-	p._animationFPS = 24;
-	
-	/** 
-	* Number of times to play through. 0 means infinite 
-	* @private
-	* @property {int} _totalLoops
-	* @default 1
-	*/
-	p._totalLoops = 1;
-	
-	/** 
-	* Keeps track of number of times played through 
-	* @private
-	* @property {int} _currentLoop
-	* @default 0
-	*/
-	p._currentLoop = 0;
-	
-	/** 
-	* Previous percentage progress value received from Audio 
-	* @private
-	* @property {Number} _lastProgress
-	* @default 0
-	*/
-	p._lastProgress = 0;
-	
-	/** 
-	* Has this animation been paused by the pause() function? 
-	* @public
-	* @property {Bool} paused
-	* @default false
-	* @readOnly
-	*/
-	p.paused = false;
-	
-	/** 
-	* Reference to the AnimatorTimeline of current animation sequence 
-	* @private
-	* @property {cloudkid.AnimatorTimeline} _animation
-	*/
-	p._animation = null;
-	
-	/** 
-	* Callback when we're done playing 
-	* @private
-	* @property {Function} _playCompleteCallback
-	*/
-	p._playCompleteCallback = null;
-	
-	/** 
-	* Boolean to check if the sound is finished 
-	* @private
-	* @property {Bool} _audioDone
-	*/
-	p._audioDone = false;
-	
-	/** 
-	* Boolean to check if the animation is done 
-	* @private
-	* @property {Bool} _animDone
-	*/
-	p._animDone = false;
-	
-	/** 
-	* Fudge Factor ??? how many frames out of sync can we be before we make corrections
-	* @private
-	* @property {int} _syncDiff
-	* @default 2
-	*/
-	p._syncDiff = 2;
-	
-	/** 
-	* If this should also control some captions as well. 
-	* @private
-	* @property {Bool} _handleCaptions
-	* @default false
-	*/
-	p._handleCaptions = false;
-	
-	/** 
-	* A function to call when handling captions. 
-	* @private
-	* @property {Function} _captionUpdate
-	*/
-	p._captionUpdate = null;
-			
-	/**
-	*  Constructor function for the AudioAnimation class
-	*  @constructor
-	*  @method initialize
-	*  @param {createjs.MovieClip} movieClip Reference to the movie clip
-	*  @param {String} soundAlias The alias to the sound to play
-	*  @param {String*} frameLabel The frame label to play using Animator
-	*  @param {Number*} numLoops The number of loops, defaults to 1, 0 is infinite
-	*  @param {Number*} soundStartFrame Specify a start sound frame, default to sound start
-	*/
-	p.initialize = function(movieClip, soundAlias, frameLabel, numLoops, soundStartFrame)
+	p._onAudioFinished = function()
 	{
-		this._clip = movieClip;
-		this._audioAlias = soundAlias;
-		this._frameLabel = (frameLabel === undefined) ? null : frameLabel;
-		this._totalLoops = (numLoops === undefined) ? 1 : numLoops;
-		
-		if(this._frameLabel !== null)
+		cloudkid.OS.instance.removeUpdateCallback("VOPlayer");//remove any update callback
+		if(this.captions && this._audioInst)//if we have captions and an audio instance, set the caption time to the length of the audio
+			this.captions.seek(this._audioInst.length);
+		this._audioInst = null;//clear the audio instance
+		this._listCounter++;//advance list
+		if(this._listCounter >= this.audioList.length)//if the list is complete
 		{
-			this._animStartFrame = this._clip.timeline.resolve(this._frameLabel);
-			if(this._totalLoops == 1)
-			{
-				this._animEndFrame = this._clip.timeline.resolve(this._frameLabel + "_stop");
-				if(this._animEndFrame === undefined)
-				{
-					this._animEndFrame = this._clip.timeline.resolve(this._frameLabel + "_loop");
-				}
-			}
-			else
-			{
-				this._animEndFrame = this._clip.timeline.resolve(this._frameLabel + "_loop");
-				if(this._animEndFrame === undefined)
-				{
-					this._animEndFrame = this._clip.timeline.resolve(this._frameLabel + "_stop");
-				}
-			}
+			if(this.captions)
+				this.captions.stop();
+			this._currentAudio = null;
+			var c = this._callback;
+			this._callback = null;
+			if(c) c();
 		}
 		else
 		{
-			this._animEndFrame = this._clip.timeline.duration - 1;
-		}
-		
-		this._audioStartFrame = (soundStartFrame === undefined) ? this._animStartFrame : soundStartFrame;
-		this._animDuration = this._animEndFrame - this._animStartFrame;
-		
-		if(_audio === null)
-			_audio = Audio.instance;
-		
-		_audioAnims++;
-		
-		// Get the number of frames in the animation
-		this._animationFPS = OS.instance.fps;
-		this._audioDuration = Math.round(_audio.getLength(this._audioAlias) * this._animationFPS);
-		
-		if(this._audioDuration != this._animDuration && _audio.isLooping(this._audioAlias))
-		{
-			Debug.warn("The sound '" + this._audioAlias + "' and animation '" + this._frameLabel + "' aren't the same length (sound: " + this._audioDuration+ ", animation: " + this._animDuration + ")");
-		}
-		
-		var self = this, autoPaused = -1;
-		this._visibility = new PageVisibility(
-			function()
+			this._currentAudio = this.audioList[this._listCounter];
+			if(typeof this._currentAudio == "string")
 			{
-				if (autoPaused === 0) 
-				{
-					if (self._animation) self._animation.setPaused(false);
-				}
-				autoPaused = -1;
-			},
-			function() 
-			{		
-				if (autoPaused === -1)
-				{
-					// save the current status of the paused state
-					autoPaused = self.paused ? 1 : 0;
-				}
-				if (self._animation) self._animation.setPaused(true);
+				//If the sound doesn't exist, then we play it and let it fail, an error should be shown and playback will continue
+				this._playAudio();
 			}
-		);
+			else if(typeof this._currentAudio == "function")
+			{
+				this._currentAudio();//call function
+				this._onAudioFinished();//immediately continue
+			}
+			else// if(typeof this._currentAudio == "number")
+			{
+				this._timer = this._currentAudio;//set up a timer to wait
+				this._currentAudio = null;
+				cloudkid.OS.instance.addUpdateCallback("VOPlayer", this._update);
+			}
+		}
 	};
-	
+
 	/**
-	*   Play Animation and Audio from beginning
-	*   @method play
-	*   @public
-	*   @param {function} The optional callback when we're done playing, non-looping sound only!
+	*	The update callback used for silence timers and updating captions without active audio.
+	*	This method is bound to the VOPlayer instance.
+	*	@method _update
+	*	@private
+	*	@param {int} elapsed The time elapsed since the previous frame, in milliseconds.
 	*/
-	p.play = function(callback)
+	p._update = function(elapsed)
 	{
-		// Immediately stop any sound that's playing
-		_audio.stop();
-		
-		this._playCompleteCallback = (callback !== undefined) ? callback : null;
-		this._currentLoop = 1;
-		this._handleCaptions = Captions && Captions.instance && Captions.instance.hasCaption(this._audioAlias);
-		this._captionUpdate = this._handleCaptions ? Captions.instance.run(this._audioAlias) : null;
-		this._startPlayback();
-	};
-	
-	/** 
-	* Play AudioAnimation after data is ready. Also used for looping
-	* @method _startPlayback
-	* @private
-	*/
-	p._startPlayback = function()
-	{
-		this._animation = null;
-		this._lastProgress = 0;
-		this._audioDone = false;
-		this._animDone = false;
-		this.paused = false;
-		
-		// is sound set to start within 2 frames of animation?
-		if(this._audioStartFrame <= this._animStartFrame + this._syncDiff)
+		if(this.captions)
+			this.captions.updateTime(elapsed);
+		this._timer -= elapsed;
+		if(this._timer <= 0)
 		{
-			this._audioStarted = true;
-			this._animation = Animator.play(
-				this._clip,	
-				this._frameLabel, 
-				this._animationFinished.bind(this), 
-				null, true
-			);
-			_audio.play(
-				this._audioAlias, 
-				this._audioFinished.bind(this),
-				this._update.bind(this)
-			);
+			this._onAudioFinished();
+		}
+	};
+
+	/**
+	*	The update callback used for updating captions with active audio.
+	*	This method is bound to the VOPlayer instance.
+	*	@method _updateCaptionPos
+	*	@private
+	*	@param {int} elapsed The time elapsed since the previous frame, in milliseconds.
+	*/
+	p._updateCaptionPos = function(elapsed)
+	{
+		if(!this._audioInst) return;
+		this.captions.seek(this._audioInst.position);
+	};
+
+	/** 
+	*	Plays the current audio item and begins preloading the next item.
+	*	@method _playAudio
+	*	@private
+	*/
+	p._playAudio = function()
+	{
+		var s = cloudkid.Audio.instance;
+		if(!s.hasAlias(this._currentAudio) && this.captions && this.captions.hasCaption(this._currentAudio))
+		{
+			this.captions.run(this._currentAudio);
+			this._timer = this.captions.currentDuration;
+			this._currentAudio = null;
+			cloudkid.OS.instance.addUpdateCallback("VOPlayer", this._update);
 		}
 		else
 		{
-			if (true)
+			this._audioInst = s.play(this._currentAudio, this._audioListener);
+			if(this.captions)
 			{
-				Debug.log("Delay starting sound because of frame offset");
+				this.captions.run(this._currentAudio);
+				cloudkid.OS.instance.addUpdateCallback("VOPlayer", this._updateCaptionPos);
 			}
-			
-			this._clip.timeline.addEventListener("change", this._onFrameUpdate.bind(this));
-			_audio.prepare(this._audioAlias);
-			this._audioStarted = false;
-			this._animation = Animator.play(
-				this._clip,	
-				this._frameLabel, 
-				this._animationFinished.bind(this), 
-				null, true
-			);
 		}
-	};
-	
-	/** 
-	*  We recieved loop callback from sound or the sound is over
-	*  @private
-	*  @method _audioFinished
-	*/
-	p._audioFinished = function()
-	{
-		if(!this._animDone && this._animation && this._animation.getPaused())
-		{
-			this._animation.setPaused(false);
-		}
-		this._audioDone = true;
-		this._doneCheck();
 	};
 	
 	/**
-	*  Callback when the animation is finished
-	*  @private
-	*  @method _animationFinished
+	*	Stops playback of any audio/timer.
+	*	@method stop
+	*	@public
 	*/
-	p._animationFinished = function()
+	p.stop = function()
 	{
-		if(this._animation)
-			this._animation.onComplete = null;
-			
-		this._animDone = true;
-		this._doneCheck();
-	};
-	
-	/** 
-	*  Pause Animation and Audio at current position to be resumed later
-	*  @method pause
-	*  @public
-	*/
-	p.pause = function()
-	{
-		if (!this.paused)
+		if(this._currentAudio)
 		{
-			this.paused = true;
-			_audio.pause();
-			if (this._animation) 
-				this._animation.setPaused(true);
+			cloudkid.Audio.instance.stop();
+			this._currentAudio = null;
+			this._callback = null;
 		}
+		if(this.captions)
+			this.captions.stop();
+		cloudkid.OS.instance.removeUpdateCallback("VOPlayer");
+		this.audioList = null;
+		this._timer = 0;
 	};
-	
-	/** 
-	*  Resume playback of Audio and Animation from paused position 
-	*  @method resume
-	*  @public
-	*/
-	p.resume = function()
-	{
-		if (this.paused)
-		{
-			this.paused = false;
-			_audio.resume();
-			if (this._animation) 
-				this._animation.setPaused(false);
-		}
-	};
-	
-	/** 
-	*  Stop playing animation and sound, and forget about current position 
-	*  @method stop
-	*  @public
-	*  @param {Bool} If we should do the callback (for instance, when skipping an animation)
-	*/
-	p.stop = function(doCallback)
-	{
-		_audio.stop();
-		Animator.stop(this._clip);
-		this.paused = true;
-		this._animation = null;
-		
-		doCallback = (doCallback === undefined) ? false : doCallback;
-		
-		// Check to see if we should do the callback
-		if(this._playCompleteCallback && doCallback) 
-		{
-			this._playCompleteCallback();
-		}
-		this._playCompleteCallback = null;	
-	};
-	
+
 	/**
-	*  Check to see if we should do the finishing callback
-	*  @private
-	*  @method _doneCheck
-	*/
-	p._doneCheck = function()
-	{		
-		// Don't do the callback if the animation or sound aren't finished
-		// this make it so the animation or the sound can be longer
-		if (!this._animDone || !this._audioDone) return;
-		
-		var infinite = this._totalLoops === 0;
-		
-		// Check to see if we should keep looping
-		if (infinite || this._totalLoops > 1)
-		{
-			if(infinite || this._currentLoop < this._totalLoops)
-			{
-				Animator.stop(this._clip);
-				this._currentLoop++;
-				this._startPlayback();
-			}
-			else
-			{
-				this.stop(true);
-			}
-		}
-		else
-		{
-			this.stop(true);
-		}
-	};
-	
-	/** 
-	*   We recieved a progress event from the sound. 
-	*   Let's make sure the animation isn't too far ahead or behind
-	*   @method _update
-	*   @private
-	*   @param {Number} The current percentage
-	*/
-	p._update = function(progress)
-	{
-		if (this.paused) return;
-		
-		if(this._captionUpdate)
-			this._captionUpdate(progress);
-		
-		// Audio is playing
-		if(progress > this._lastProgress)
-		{	
-			if(progress == 1 && this._lastProgress === 0) return;
-			// Save the last percent
-			this._lastProgress = progress;
-			
-			// If the animation is done, ignore this
-			if (this._animDone) return;
-			
-			// Audio position in frames
-			var soundPos = parseInt(this._audioStartFrame, 10) + Math.round(this._audioDuration * this._lastProgress);
-			
-			// Clip position in frames
-			var clipPos = this._clip.timeline.position;
-			
-			//if (true)
-			//{
-			//	Debug.log("Audio Position: " + soundPos + " start: " + this._audioStartFrame + " duration: " + this._audioDuration + " lastProgress: " + this._lastProgress + " clipPos: " + clipPos + " animStart: " + this._animStartFrame + " animEnd: " + this._animEndFrame);
-			//}
-			
-			// The animation is behind, catch up
-			if(soundPos > clipPos)
-			{
-				// Unpause the sound if it's paused
-				if(this._animation.getPaused())
-				{
-					this._animation.setPaused(false);
-				}
-				
-				if (soundPos > this._animEndFrame)
-				{
-					this._animationFinished();
-				}
-				else
-				{
-					this._clip.gotoAndPlay(soundPos);
-				}
-				
-			}
-			//Whoa, Nelly! ??? Slow down, animation
-			else if(soundPos + this._syncDiff < clipPos && this._lastProgress != 1)
-			{
-				this._animation.setPaused(true);
-			}
-		}
-	};
-	
-	/** 
-	* Used to check if it's time to start a delayed sound 
-	* @private
-	* @method _onFrameUpdate
-	*/
-	p._onFrameUpdate = function()
-	{
-		if (true)
-		{
-			Debug.log("Anim Position: " + this._clip.timeline.position);
-		}
-		if(!this._audioStarted && this._clip.timeline.position >= this._audioStartFrame)
-		{
-			this._audioStarted = true;
-			_audio.play(
-				this._audioAlias, 
-				this._audioFinished.bind(this),
-				this._update.bind(this)
-			);
-			this._clip.timeline.removeAllEventListeners();
-		}
-	};
-	
-	/**  
-	*  Clear data and remove all references, don't use object after this
-	*  @public
-	*  @method destroy
+	*	Cleans up this VOPlayer.
+	*	@method destroy
+	*	@public
 	*/
 	p.destroy = function()
 	{
-		_audioAnims--;
-		
-		// If there are no more animation remove reference to sound class
-		if(_audioAnims === 0) _audio = null;
-		
-		if (this._visibility)
+		this.stop();
+		this.audioList = null;
+		this._listHelper = null;
+		this._currentAudio = null;
+		this._audioInst = null;
+		this._callback = null;
+		this._audioListener = null;
+		if(this.captions)
 		{
-			this._visibility.destroy();
+			this.captions.destroy();
+			this.captions = null;
 		}
-		
-		this._visibility =
-		this._clip =
-		this._audioAlias =
-		this._totalLoops =
-		this._frameLabel =
-		this._animStartFrame =
-		this._animEndFrame =
-		this._animDuration =
-		this._totalLoops =
-		this._currentLoop =
-		this._lastProgress =
-		this._animation = null;
 	};
 	
-	// Assign to the cloudkid namespace
-	namespace('cloudkid').AudioAnimation = AudioAnimation;
+	namespace('cloudkid').VOPlayer = VOPlayer;
 }());

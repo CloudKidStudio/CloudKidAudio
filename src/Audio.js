@@ -461,14 +461,14 @@
 		{
 			this._playAudio();
 		}
-		var inst = _currentInst = new AudioInst();
-		inst._end = _currentData.end * 1000;
-		inst._start = _currentData.start * 1000;
-		inst.length = inst._end - inst._start;
+		_currentInst = new AudioInst();
+		_currentInst._end = _currentData.end * 1000;
+		_currentInst._start = _currentData.start * 1000;
+		_currentInst.length = _currentInst._end - _currentInst._start;
 		
 		setTimeout(onStart, 0);//call onStart ASAP after function returns the AudioInst
 		
-		return inst;
+		return _currentInst;
 	};
 	
 	/**
@@ -714,8 +714,8 @@
 	*/
 	p.hasAlias = function(alias)
 	{
-		return _data ? false : !!_data.spritemap[alias];
-	}
+		return _data ? !!_data.spritemap[alias] : false;
+	};
 
 	/** 
 	* Returns array of sound aliases in spritemap
@@ -825,7 +825,7 @@
 	*	@method stop
 	*	@public
 	*/
-	AudioInst.prototype.stop()
+	AudioInst.prototype.stop = function()
 	{
 		if(this.isValid)
 		{
@@ -838,7 +838,7 @@
 	*	@method pause
 	*	@public
 	*/
-	AudioInst.prototype.pause()
+	AudioInst.prototype.pause = function()
 	{
 		if(this.isValid)
 		{
@@ -851,7 +851,7 @@
 	*	@method unpause
 	*	@public
 	*/
-	AudioInst.prototype.unpause()
+	AudioInst.prototype.unpause = function()
 	{
 		if(this.isValid)
 		{
