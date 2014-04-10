@@ -62,7 +62,7 @@
         _onFinish = onFinish || null, _onUpdate = onUpdate || null, _paused = !1, _progress = 0, 
         _silencePosition = 0, _muted ? this._playSilence() : this._playAudio(), _currentInst = new AudioInst(), 
         _currentInst._end = 1e3 * _currentData.end, _currentInst._start = 1e3 * _currentData.start, 
-        _currentInst.length = _currentInst._end - _currentInst._start, setTimeout(onStart, 0), 
+        _currentInst.length = _currentInst._end - _currentInst._start, "function" == typeof onStart && setTimeout(onStart, 0), 
         _currentInst) : null;
     }, p._playSilence = function() {
         _duration = this.getLength(_currentAlias), _silencePosition = _audioSprite.getPosition(), 

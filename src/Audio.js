@@ -466,7 +466,8 @@
 		_currentInst._start = _currentData.start * 1000;
 		_currentInst.length = _currentInst._end - _currentInst._start;
 		
-		setTimeout(onStart, 0);//call onStart ASAP after function returns the AudioInst
+		if(typeof onStart == "function")
+			setTimeout(onStart, 0);//call onStart ASAP after function returns the AudioInst
 		
 		return _currentInst;
 	};
