@@ -136,6 +136,13 @@
 	* @private
 	*/
 	_currentInst = null;
+
+	/** 
+	* If the sound file is loaded
+	* @property {Bool} soundLoaded
+	* @public
+	*/
+	p.soundLoaded = false;
 	
 	/** 
 	* The global version of the library 
@@ -343,6 +350,7 @@
 			_audioSprite.off(SwishSprite.LOADED)
 				.on(SwishSprite.PROGRESS, self._onUpdate)
 				.on(SwishSprite.COMPLETE, self._onComplete);
+			self.soundLoaded = true;
 			callback();
 		});
 		

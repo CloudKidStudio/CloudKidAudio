@@ -4,7 +4,7 @@
         this._onUpdate = this._onUpdate.bind(this), this._onComplete = this._onComplete.bind(this), 
         this.initialize(dataURLorObject, onReady);
     }, p = Audio.prototype, _data = null, _destroyed = !1, _currentData = null, _currentAlias = null, _onFinish = null, _onUpdate = null, _paused = !1, _progress = 0, _muted = !1, _duration = 0, _silencePosition = 0, _updateAlias = "AudioMute", _updateSpriteAlias = "SwishSprite", _audioSprite = null, _instance = null, _currentInst = null;
-    Audio.VERSION = "2.0.0", Audio.init = function(dataURLorObject, onReady) {
+    p.soundLoaded = !1, Audio.VERSION = "2.0.0", Audio.init = function(dataURLorObject, onReady) {
         return _instance || new Audio(dataURLorObject, onReady), _instance;
     }, Object.defineProperty(Audio, "instance", {
         get: function() {
@@ -45,7 +45,7 @@
         var self = this;
         _audioSprite.off(SwishSprite.LOADED), _audioSprite.on(SwishSprite.LOADED, function() {
             _audioSprite.off(SwishSprite.LOADED).on(SwishSprite.PROGRESS, self._onUpdate).on(SwishSprite.COMPLETE, self._onComplete), 
-            callback();
+            self.soundLoaded = !0, callback();
         }), OS.instance.addUpdateCallback(_updateSpriteAlias, _audioSprite.update), _audioSprite.load();
     }, p.prepare = function(alias) {
         isReady(alias) && _audioSprite.prepare(alias);
