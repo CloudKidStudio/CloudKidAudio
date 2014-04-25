@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html class="no-js">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>CloudKidAudio Example</title>
-        <meta name="description" content="">
-
-        <link rel="stylesheet" href="css/normalize.min.css">
-        <link rel="stylesheet" href="css/main.css">
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>CloudKidAudio Test Example</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		
-        <script src="libs/jquery/dist/jquery.min.js"></script>
+		<link rel="stylesheet" href="css/normalize.min.css">
+		<link rel="stylesheet" href="css/sprite.css">		
+
+		<script src="libs/jquery/dist/jquery.min.js"></script>
 		<script src="libs/tweenjs/lib/tweenjs-0.4.1.min.js"></script>
 		<script src="libs/easeljs/lib/easeljs-0.6.1.min.js"></script>
 		<script src="libs/preloadjs/lib/preloadjs-0.3.2.min.js"></script>
@@ -18,58 +17,35 @@
 		<script src="libs/cloudkid-namespace/namespace.js"></script>
 		<script src="libs/swish-sprite/dist/swish-sprite.min.js"></script>
 		<script src="libs/cloudkid-os/dist/cloudkid-os-createjs.min.js"></script>
-		<script src="libs/cloudkid-animation/dist/cloudkid-animation.min.js"></script>
-
-		<script src="../dist/cloudkid-audio.debug.js"></script>
+		<script src="libs/cloudkid-animation/dist/cloudkid-animation-createjs.min.js"></script>
 		
-		<script src="js/Chick.js"></script>
-		<script src="js/AudioDemo.js"></script>
-				
-    </head>
-    <body>
-		<div id="content">
-			<div id="start_container"><button id="start">Preload</button></div>
-			<div id="ui">
-				<div class="col1">
-					<button data-action="pauseAni" class="anim">Pause Anim</button>
-					<button data-action="resumeAni" class="anim">Resume Anim</button>
-					<button data-action="stopAni" class="anim">Stop Anim</button>
-					<button data-action="pauseSnd">Pause Sound</button>
-					<button data-action="resumeSnd">Resume Sound</button>
-					<button data-action="stopSnd">Stop Sound</button>
-					<button data-action="mute">Mute</button>
-				</div>
-				<div class="col2">
-					<button data-action="sync" class="anim">Anim Once</button>
-					<button data-action="syncLoop" class="anim">Anim (3)</button>
-					<button data-action="syncLoop4Eva" class="anim">Anim Loop</button>
-					<button data-action="dam">Sound Loop</button>
-					<button data-action="hose">Sound #1</button>
-					<button data-action="scat">Sound #2</button>
-					<button data-action="unmute">Unmute</button>
-				</div>
+		<script src="../dist/cloudkid-audio.debug.js"></script>
+
+		<script src="js/Sprite.js"></script>	
+			
+ 	</head>
+	<body class="unloaded">
+		<button id="load" class="disabled" disabled>Load</button>
+		<div class="controlsFrame">
+			<div class="controls">
+				<h1>Controls</h1>
+				<ul>				
+					<li><button data-action="stop" class="control disabled" disabled>Stop</button></li>
+					<li><button data-action="pause" class="control disabled" disabled>Pause</button></li>
+					<li><button data-action="unpause" class="control disabled" disabled>Unpause</button></li>
+					<li><button data-action="mute" class="control disabled" disabled>Mute</button></li>
+					<li><button data-action="unmute" class="control disabled" disabled>Unmute</button></li>
+				</ul>
+				<br style="clear:both">
 			</div>
-        	<canvas id="stage" width="550" height="400"></canvas>
-			<button class="destroy">Destroy</button>
-			<script>
-				if (/[0-9\.]+/.test(document.location.host))
-					Debug.connect(document.location.host);
-					
-				var os = cloudkid.OS.init("stage", {
-					showFramerate: true,
-					fps: 60,
-					parseQueryString: true,
-					debug: true,
-					clearView: true
-				});
-				os.addApp(new cloudkid.AudioDemo);
-				$('button.destroy').click(function(){
-					os.destroy();
-					$("#content").remove();
-					$(this).remove();
-				});
-			</script>
+			<div class="timeline">
+				<div class="playbar" id="playbar"></div>
+			</div>
 		</div>
-		<footer>CloudKid 2013</footer>
-    </body>
+		<div class="aliases">
+			<h1>Aliases</h1>
+			<ul id="aliases"></ul>
+			<br style="clear:both">
+		</div>
+	</body>
 </html>
