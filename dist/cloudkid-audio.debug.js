@@ -4,7 +4,7 @@
         this._onUpdate = this._onUpdate.bind(this), this._onComplete = this._onComplete.bind(this), 
         this.initialize(dataURLorObject, onReady);
     }, p = Audio.prototype, _data = null, _destroyed = !1, _currentData = null, _currentAlias = null, _onFinish = null, _onUpdate = null, _paused = !1, _progress = 0, _muted = !1, _duration = 0, _silencePosition = 0, _updateAlias = "AudioMute", _updateSpriteAlias = "SwishSprite", _audioSprite = null, _instance = null, _currentInst = null;
-    p.soundLoaded = !1, Audio.VERSION = "2.0.1", Audio.init = function(dataURLorObject, onReady) {
+    p.soundLoaded = !1, Audio.VERSION = "2.0.2", Audio.init = function(dataURLorObject, onReady) {
         return _instance || new Audio(dataURLorObject, onReady), _instance;
     }, Object.defineProperty(Audio, "instance", {
         get: function() {
@@ -125,11 +125,12 @@
         this.isValid && _instance.resume();
     }, namespace("cloudkid").Audio = Audio;
 }(window, document), function() {
-    var VOPlayer = function(useCaptions) {
-        this._audioListener = this._onAudioFinished.bind(this), this._update = this._update.bind(this), 
-        this._updateCaptionPos = this._updateCaptionPos.bind(this), useCaptions && (this.captions = new cloudkid.Captions(null, !0)), 
-        this._listHelper = [];
-    }, p = VOPlayer.prototype = {};
+    var Captions, Audio, OS, VOPlayer = function(useCaptions) {
+        Captions = cloudkid.Captions, Audio = cloudkid.Audio, OS = cloudkid.OS, this._audioListener = this._onAudioFinished.bind(this), 
+        this._update = this._update.bind(this), this._updateCaptionPos = this._updateCaptionPos.bind(this), 
+        useCaptions && (this.captions = useCaptions instanceof Captions ? useCaptions : new Captions(), 
+        this.captions.isSlave = !0), this._listHelper = [];
+    }, p = VOPlayer.prototype = {}, ALIAS = "VOPlayer";
     p.audioList = null, p._listCounter = 0, p._currentAudio = null, p._audioInst = null, 
     p._callback = null, p._audioListener = null, p._timer = 0, p.captions = null, p._listHelper = null, 
     Object.defineProperty(p, "playing", {
@@ -143,26 +144,26 @@
         this.stop(), this._listCounter = -1, this.audioList = list, this._callback = callback, 
         this._onAudioFinished();
     }, p._onAudioFinished = function() {
-        if (cloudkid.OS.instance.removeUpdateCallback("VOPlayer"), this.captions && this._audioInst && this.captions.seek(this._audioInst.length), 
+        if (OS.instance.removeUpdateCallback(ALIAS), this.captions && this._audioInst && this.captions.seek(this._audioInst.length), 
         this._audioInst = null, this._listCounter++, this._listCounter >= this.audioList.length) {
             this.captions && this.captions.stop(), this._currentAudio = null;
             var c = this._callback;
             this._callback = null, c && c();
         } else this._currentAudio = this.audioList[this._listCounter], "string" == typeof this._currentAudio ? this._playAudio() : "function" == typeof this._currentAudio ? (this._currentAudio(), 
         this._onAudioFinished()) : (this._timer = this._currentAudio, this._currentAudio = null, 
-        cloudkid.OS.instance.addUpdateCallback("VOPlayer", this._update));
+        OS.instance.addUpdateCallback(ALIAS, this._update));
     }, p._update = function(elapsed) {
         this.captions && this.captions.updateTime(elapsed), this._timer -= elapsed, this._timer <= 0 && this._onAudioFinished();
     }, p._updateCaptionPos = function() {
         this._audioInst && this.captions.seek(this._audioInst.position);
     }, p._playAudio = function() {
-        var s = cloudkid.Audio.instance;
+        var s = Audio.instance;
         !s.hasAlias(this._currentAudio) && this.captions && this.captions.hasCaption(this._currentAudio) ? (this.captions.run(this._currentAudio), 
-        this._timer = this.captions.currentDuration, this._currentAudio = null, cloudkid.OS.instance.addUpdateCallback("VOPlayer", this._update)) : (this._audioInst = s.play(this._currentAudio, this._audioListener), 
-        this.captions && (this.captions.run(this._currentAudio), cloudkid.OS.instance.addUpdateCallback("VOPlayer", this._updateCaptionPos)));
+        this._timer = this.captions.currentDuration, this._currentAudio = null, OS.instance.addUpdateCallback(ALIAS, this._update)) : (this._audioInst = s.play(this._currentAudio, this._audioListener), 
+        this.captions && (this.captions.run(this._currentAudio), OS.instance.addUpdateCallback(ALIAS, this._updateCaptionPos)));
     }, p.stop = function() {
-        this._currentAudio && (cloudkid.Audio.instance.stop(), this._currentAudio = null, 
-        this._callback = null), this.captions && this.captions.stop(), cloudkid.OS.instance.removeUpdateCallback("VOPlayer"), 
+        this._currentAudio && (Audio.instance.stop(), this._currentAudio = null, this._callback = null), 
+        this.captions && this.captions.stop(), OS.instance.removeUpdateCallback(ALIAS), 
         this.audioList = null, this._timer = 0;
     }, p.destroy = function() {
         this.stop(), this.audioList = null, this._listHelper = null, this._currentAudio = null, 
