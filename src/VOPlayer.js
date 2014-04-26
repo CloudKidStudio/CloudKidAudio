@@ -258,7 +258,7 @@
 		var s = Audio.instance;
 		if (!s.hasAlias(this._currentAudio) && this.captions && this.captions.hasCaption(this._currentAudio))
 		{
-			this.captions.run(this._currentAudio);
+			this.captions.play(this._currentAudio);
 			this._timer = this.captions.currentDuration;
 			this._currentAudio = null;
 			OS.instance.addUpdateCallback(ALIAS, this._update);
@@ -268,7 +268,7 @@
 			this._audioInst = s.play(this._currentAudio, this._audioListener);
 			if (this.captions)
 			{
-				this.captions.run(this._currentAudio);
+				this.captions.play(this._currentAudio);
 				OS.instance.addUpdateCallback(ALIAS, this._updateCaptionPos);
 			}
 		}

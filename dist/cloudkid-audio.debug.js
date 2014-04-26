@@ -11,13 +11,14 @@
             return _instance;
         }
     }), p.initialize = function(dataURLorObject, onReady) {
-        return _instance ? void Debug.warn("Audio is already initialized, use Audio.instance") : (_destroyed = !1, 
-        _instance = this, void ("object" == typeof dataURLorObject ? (Debug.log("Load the JSON object directly"), 
+        return _instance ? (Debug.warn("Audio is already initialized, use Audio.instance"), 
+        void 0) : (_destroyed = !1, _instance = this, "object" == typeof dataURLorObject ? (Debug.log("Load the JSON object directly"), 
         validateData(dataURLorObject, onReady)) : "string" == typeof dataURLorObject ? (Debug.log("Load from the URL " + dataURLorObject), 
         MediaLoader.instance.load(dataURLorObject, function(result) {
-            return result && result.content ? void validateData(result.content, onReady) : (Debug.error("Unable to load the audio sprite data from url '" + dataUrl + "'"), 
-            void onReady(!1));
-        })) : (Debug.error("Audio constructor data is not a URL or json object"), onReady(!1))));
+            return result && result.content ? (validateData(result.content, onReady), void 0) : (Debug.error("Unable to load the audio sprite data from url '" + dataUrl + "'"), 
+            onReady(!1), void 0);
+        })) : (Debug.error("Audio constructor data is not a URL or json object"), onReady(!1)), 
+        void 0);
     };
     var validateData = function(data, callback) {
         _data = data;
@@ -38,7 +39,7 @@
     p.getAudioSprite = function() {
         return _audioSprite;
     }, p.load = function(callback) {
-        if (!_data) return void Debug.error("Must load sprite data first.");
+        if (!_data) return Debug.error("Must load sprite data first."), void 0;
         var i, resource, cacheManager = MediaLoader.instance.cacheManager, len = _data.resources.length;
         for (i = 0; len > i; i++) resource = _data.resources[i], _data.resources[i] = cacheManager.prepare(resource.url !== undefined ? resource.url : resource, !0);
         _audioSprite || (_audioSprite = new SwishSprite(_data), _audioSprite.manualUpdate = !0);
@@ -158,9 +159,9 @@
         this._audioInst && this.captions.seek(this._audioInst.position);
     }, p._playAudio = function() {
         var s = Audio.instance;
-        !s.hasAlias(this._currentAudio) && this.captions && this.captions.hasCaption(this._currentAudio) ? (this.captions.run(this._currentAudio), 
+        !s.hasAlias(this._currentAudio) && this.captions && this.captions.hasCaption(this._currentAudio) ? (this.captions.play(this._currentAudio), 
         this._timer = this.captions.currentDuration, this._currentAudio = null, OS.instance.addUpdateCallback(ALIAS, this._update)) : (this._audioInst = s.play(this._currentAudio, this._audioListener), 
-        this.captions && (this.captions.run(this._currentAudio), OS.instance.addUpdateCallback(ALIAS, this._updateCaptionPos)));
+        this.captions && (this.captions.play(this._currentAudio), OS.instance.addUpdateCallback(ALIAS, this._updateCaptionPos)));
     }, p.stop = function() {
         this._currentAudio && (Audio.instance.stop(), this._currentAudio = null, this._callback = null), 
         this.captions && this.captions.stop(), OS.instance.removeUpdateCallback(ALIAS), 
