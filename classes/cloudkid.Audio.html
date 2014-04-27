@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.0</em>
+            <em>API Docs for: 2.0.2</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -41,9 +41,11 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/AudioInst.html">AudioInst</a></li>
+            
                 <li><a href="../classes/cloudkid.Audio.html">cloudkid.Audio</a></li>
             
-                <li><a href="../classes/cloudkid.AudioAnimation.html">cloudkid.AudioAnimation</a></li>
+                <li><a href="../classes/cloudkid.VOPlayer.html">cloudkid.VOPlayer</a></li>
             
             </ul>
 
@@ -219,6 +221,13 @@
                             </li>
                         
                             <li class="index-item method public">
+                                <a href="#method_hasAlias">hasAlias</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method public">
                                 <a href="#method_init">init</a>
 
                                 
@@ -350,6 +359,13 @@
                             </li>
                         
                             <li class="index-item property private">
+                                <a href="#property__currentInst">_currentInst</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property private">
                                 <a href="#property__data">_data</a>
 
                                 
@@ -443,6 +459,13 @@
                             </li>
                         
                             <li class="index-item property public">
+                                <a href="#property_soundLoaded">soundLoaded</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property public">
                                 <a href="#property_VERSION">VERSION</a>
 
                                 
@@ -499,7 +522,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l546"><code>src&#x2F;Audio.js:546</code></a>
+        <a href="../files/src_Audio.js.html#l578"><code>src&#x2F;Audio.js:578</code></a>
         
         </p>
 
@@ -566,7 +589,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l533"><code>src&#x2F;Audio.js:533</code></a>
+        <a href="../files/src_Audio.js.html#l565"><code>src&#x2F;Audio.js:565</code></a>
         
         </p>
 
@@ -647,7 +670,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l514"><code>src&#x2F;Audio.js:514</code></a>
+        <a href="../files/src_Audio.js.html#l546"><code>src&#x2F;Audio.js:546</code></a>
         
         </p>
 
@@ -704,7 +727,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l451"><code>src&#x2F;Audio.js:451</code></a>
+        <a href="../files/src_Audio.js.html#l483"><code>src&#x2F;Audio.js:483</code></a>
         
         </p>
 
@@ -761,7 +784,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l469"><code>src&#x2F;Audio.js:469</code></a>
+        <a href="../files/src_Audio.js.html#l501"><code>src&#x2F;Audio.js:501</code></a>
         
         </p>
 
@@ -818,7 +841,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l482"><code>src&#x2F;Audio.js:482</code></a>
+        <a href="../files/src_Audio.js.html#l514"><code>src&#x2F;Audio.js:514</code></a>
         
         </p>
 
@@ -885,7 +908,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l492"><code>src&#x2F;Audio.js:492</code></a>
+        <a href="../files/src_Audio.js.html#l524"><code>src&#x2F;Audio.js:524</code></a>
         
         </p>
 
@@ -966,7 +989,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l709"><code>src&#x2F;Audio.js:709</code></a>
+        <a href="../files/src_Audio.js.html#l758"><code>src&#x2F;Audio.js:758</code></a>
         
         </p>
 
@@ -1037,7 +1060,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l680"><code>src&#x2F;Audio.js:680</code></a>
+        <a href="../files/src_Audio.js.html#l729"><code>src&#x2F;Audio.js:729</code></a>
         
         </p>
 
@@ -1136,7 +1159,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l286"><code>src&#x2F;Audio.js:286</code></a>
+        <a href="../files/src_Audio.js.html#l302"><code>src&#x2F;Audio.js:302</code></a>
         
         </p>
 
@@ -1219,7 +1242,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l606"><code>src&#x2F;Audio.js:606</code></a>
+        <a href="../files/src_Audio.js.html#l643"><code>src&#x2F;Audio.js:643</code></a>
         
         </p>
 
@@ -1318,7 +1341,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l656"><code>src&#x2F;Audio.js:656</code></a>
+        <a href="../files/src_Audio.js.html#l693"><code>src&#x2F;Audio.js:693</code></a>
         
         </p>
 
@@ -1345,6 +1368,115 @@
                         <span class="type">Bool</span>:
                     
                     <p>If the audio is muted</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_hasAlias" class="method item public">
+    <h3 class="name"><code>hasAlias</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>alias</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">Bool</span>
+        </span>
+    
+
+    
+
+    
+        <span class="flag public">public</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_Audio.js.html#l717"><code>src&#x2F;Audio.js:717</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Returns if a sound alias is in the spritemap.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">alias</code>
+                        <span class="type">String</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The sound alias to check for.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">Bool</span>:
+                    
+                    <p>true if the alias is in the spritemap, false otherwise.</p>
 
                 
             </div>
@@ -1407,7 +1539,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l139"><code>src&#x2F;Audio.js:139</code></a>
+        <a href="../files/src_Audio.js.html#l155"><code>src&#x2F;Audio.js:155</code></a>
         
         </p>
 
@@ -1518,7 +1650,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l167"><code>src&#x2F;Audio.js:167</code></a>
+        <a href="../files/src_Audio.js.html#l183"><code>src&#x2F;Audio.js:183</code></a>
         
         </p>
 
@@ -1625,7 +1757,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l667"><code>src&#x2F;Audio.js:667</code></a>
+        <a href="../files/src_Audio.js.html#l704"><code>src&#x2F;Audio.js:704</code></a>
         
         </p>
 
@@ -1710,7 +1842,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l358"><code>src&#x2F;Audio.js:358</code></a>
+        <a href="../files/src_Audio.js.html#l379"><code>src&#x2F;Audio.js:379</code></a>
         
         </p>
 
@@ -1795,7 +1927,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l253"><code>src&#x2F;Audio.js:253</code></a>
+        <a href="../files/src_Audio.js.html#l269"><code>src&#x2F;Audio.js:269</code></a>
         
         </p>
 
@@ -1900,7 +2032,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l297"><code>src&#x2F;Audio.js:297</code></a>
+        <a href="../files/src_Audio.js.html#l313"><code>src&#x2F;Audio.js:313</code></a>
         
         </p>
 
@@ -1981,7 +2113,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l620"><code>src&#x2F;Audio.js:620</code></a>
+        <a href="../files/src_Audio.js.html#l657"><code>src&#x2F;Audio.js:657</code></a>
         
         </p>
 
@@ -2038,7 +2170,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l369"><code>src&#x2F;Audio.js:369</code></a>
+        <a href="../files/src_Audio.js.html#l390"><code>src&#x2F;Audio.js:390</code></a>
         
         </p>
 
@@ -2082,6 +2214,12 @@
             
                 <li class="arg">
                     
+                        <code>onStart</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
                         <code>onUpdate</code>
                     
                 </li>
@@ -2117,7 +2255,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l414"><code>src&#x2F;Audio.js:414</code></a>
+        <a href="../files/src_Audio.js.html#l435"><code>src&#x2F;Audio.js:435</code></a>
         
         </p>
 
@@ -2164,6 +2302,23 @@
 
                     <div class="param-description">
                         <p>Function called when the sound is done</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">onStart</code>
+                        <span class="type">Function</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Function to be called when playback starts.
+        This is called immediately, and is here to provide compatibility in usage with cloudkid.Sound.</p>
 
                     </div>
 
@@ -2240,7 +2395,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l346"><code>src&#x2F;Audio.js:346</code></a>
+        <a href="../files/src_Audio.js.html#l367"><code>src&#x2F;Audio.js:367</code></a>
         
         </p>
 
@@ -2321,7 +2476,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l390"><code>src&#x2F;Audio.js:390</code></a>
+        <a href="../files/src_Audio.js.html#l411"><code>src&#x2F;Audio.js:411</code></a>
         
         </p>
 
@@ -2388,7 +2543,7 @@
             
         
         
-        <a href="../files/src_Audio.js.html#l569"><code>src&#x2F;Audio.js:569</code></a>
+        <a href="../files/src_Audio.js.html#l601"><code>src&#x2F;Audio.js:601</code></a>
         
         </p>
 
@@ -2470,7 +2625,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l638"><code>src&#x2F;Audio.js:638</code></a>
+        <a href="../files/src_Audio.js.html#l675"><code>src&#x2F;Audio.js:675</code></a>
         
         </p>
 
@@ -2543,7 +2698,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l226"><code>src&#x2F;Audio.js:226</code></a>
+        <a href="../files/src_Audio.js.html#l242"><code>src&#x2F;Audio.js:242</code></a>
         
         </p>
 
@@ -2639,7 +2794,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l117"><code>src&#x2F;Audio.js:117</code></a>
+        <a href="../files/src_Audio.js.html#l119"><code>src&#x2F;Audio.js:119</code></a>
         
         </p>
 
@@ -2686,7 +2841,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l44"><code>src&#x2F;Audio.js:44</code></a>
+        <a href="../files/src_Audio.js.html#l46"><code>src&#x2F;Audio.js:46</code></a>
         
         </p>
 
@@ -2733,7 +2888,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l37"><code>src&#x2F;Audio.js:37</code></a>
+        <a href="../files/src_Audio.js.html#l39"><code>src&#x2F;Audio.js:39</code></a>
         
         </p>
 
@@ -2744,6 +2899,53 @@ need to resume from the current position</p>
 
     <div class="description">
         <p>Contains start + stop times for current sound</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property__currentInst" class="property item private">
+    <h3 class="name"><code>_currentInst</code></h3>
+    <span class="type"><a href="../classes/AudioInst.html" class="crosslink">AudioInst</a></span>
+
+    
+
+    
+        <span class="flag private">private</span>
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_Audio.js.html#l133"><code>src&#x2F;Audio.js:133</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>The currently playing (and thus valid) AudioInst object.</p>
 
     </div>
 
@@ -2780,7 +2982,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l22"><code>src&#x2F;Audio.js:22</code></a>
+        <a href="../files/src_Audio.js.html#l24"><code>src&#x2F;Audio.js:24</code></a>
         
         </p>
 
@@ -2827,7 +3029,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l29"><code>src&#x2F;Audio.js:29</code></a>
+        <a href="../files/src_Audio.js.html#l31"><code>src&#x2F;Audio.js:31</code></a>
         
         </p>
 
@@ -2876,7 +3078,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l87"><code>src&#x2F;Audio.js:87</code></a>
+        <a href="../files/src_Audio.js.html#l89"><code>src&#x2F;Audio.js:89</code></a>
         
         </p>
 
@@ -2923,7 +3125,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l124"><code>src&#x2F;Audio.js:124</code></a>
+        <a href="../files/src_Audio.js.html#l126"><code>src&#x2F;Audio.js:126</code></a>
         
         </p>
 
@@ -2970,7 +3172,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l80"><code>src&#x2F;Audio.js:80</code></a>
+        <a href="../files/src_Audio.js.html#l82"><code>src&#x2F;Audio.js:82</code></a>
         
         </p>
 
@@ -3017,7 +3219,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l51"><code>src&#x2F;Audio.js:51</code></a>
+        <a href="../files/src_Audio.js.html#l53"><code>src&#x2F;Audio.js:53</code></a>
         
         </p>
 
@@ -3064,7 +3266,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l58"><code>src&#x2F;Audio.js:58</code></a>
+        <a href="../files/src_Audio.js.html#l60"><code>src&#x2F;Audio.js:60</code></a>
         
         </p>
 
@@ -3111,7 +3313,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l65"><code>src&#x2F;Audio.js:65</code></a>
+        <a href="../files/src_Audio.js.html#l67"><code>src&#x2F;Audio.js:67</code></a>
         
         </p>
 
@@ -3160,7 +3362,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l73"><code>src&#x2F;Audio.js:73</code></a>
+        <a href="../files/src_Audio.js.html#l75"><code>src&#x2F;Audio.js:75</code></a>
         
         </p>
 
@@ -3207,7 +3409,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l94"><code>src&#x2F;Audio.js:94</code></a>
+        <a href="../files/src_Audio.js.html#l96"><code>src&#x2F;Audio.js:96</code></a>
         
         </p>
 
@@ -3254,7 +3456,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l101"><code>src&#x2F;Audio.js:101</code></a>
+        <a href="../files/src_Audio.js.html#l103"><code>src&#x2F;Audio.js:103</code></a>
         
         </p>
 
@@ -3303,7 +3505,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l109"><code>src&#x2F;Audio.js:109</code></a>
+        <a href="../files/src_Audio.js.html#l111"><code>src&#x2F;Audio.js:111</code></a>
         
         </p>
 
@@ -3354,7 +3556,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l156"><code>src&#x2F;Audio.js:156</code></a>
+        <a href="../files/src_Audio.js.html#l172"><code>src&#x2F;Audio.js:172</code></a>
         
         </p>
 
@@ -3365,6 +3567,53 @@ need to resume from the current position</p>
 
     <div class="description">
         <p>Static function for getting the singleton instance</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_soundLoaded" class="property item public">
+    <h3 class="name"><code>soundLoaded</code></h3>
+    <span class="type">Bool</span>
+
+    
+
+    
+        <span class="flag public">public</span>
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_Audio.js.html#l140"><code>src&#x2F;Audio.js:140</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>If the sound file is loaded</p>
 
     </div>
 
@@ -3403,7 +3652,7 @@ need to resume from the current position</p>
             
         
         
-        <a href="../files/src_Audio.js.html#l131"><code>src&#x2F;Audio.js:131</code></a>
+        <a href="../files/src_Audio.js.html#l147"><code>src&#x2F;Audio.js:147</code></a>
         
         </p>
 

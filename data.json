@@ -2,7 +2,7 @@
     "project": {
         "name": "CloudKid Audio API",
         "description": "CloudKid Audio API: a library for playing HTML5 sprite audio",
-        "version": "1.0.0",
+        "version": "2.0.2",
         "logo": "cloudkid.png"
     },
     "files": {
@@ -10,16 +10,17 @@
             "name": "src/Audio.js",
             "modules": {},
             "classes": {
-                "cloudkid.Audio": 1
+                "cloudkid.Audio": 1,
+                "AudioInst": 1
             },
             "fors": {},
             "namespaces": {}
         },
-        "src/AudioAnimation.js": {
-            "name": "src/AudioAnimation.js",
+        "src/VOPlayer.js": {
+            "name": "src/VOPlayer.js",
             "modules": {},
             "classes": {
-                "cloudkid.AudioAnimation": 1
+                "cloudkid.VOPlayer": 1
             },
             "fors": {},
             "namespaces": {}
@@ -39,43 +40,37 @@
             "line": 10,
             "description": "Audio class is designed to play audio sprites in a cross-platform compatible manner using HTML5 and the SwishSprite library."
         },
-        "cloudkid.AudioAnimation": {
-            "name": "cloudkid.AudioAnimation",
-            "shortname": "cloudkid.AudioAnimation",
+        "AudioInst": {
+            "name": "AudioInst",
+            "shortname": "AudioInst",
             "classitems": [],
             "plugins": [],
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "src/AudioAnimation.js",
-            "line": 12,
-            "description": "AudioAnimation Handles playback of a single MovieClip in sync with a sound managed by cloudkid.Audio",
+            "file": "src/Audio.js",
+            "line": 787,
+            "description": "A playing instance of a sound. This class is primarily for compatability/standardization with CloudKidSound,\nand to make syncing animation with audio easier. These can only be created through cloudkid.Audio.instance.play()."
+        },
+        "cloudkid.VOPlayer": {
+            "name": "cloudkid.VOPlayer",
+            "shortname": "cloudkid.VOPlayer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src/VOPlayer.js",
+            "line": 9,
+            "description": "A class for managing audio by only playing one at a time, playing a list, and even\nmanaging captions (CloudKidCaptions library) at the same time.",
             "is_constructor": 1,
             "params": [
                 {
-                    "name": "movieClip",
-                    "description": "the animation to sync with sound",
-                    "type": "createjs.MovieClip"
-                },
-                {
-                    "name": "soundAlias",
-                    "description": "the name of the sound to play with MovieClip",
-                    "type": "String"
-                },
-                {
-                    "name": "frameLabel",
-                    "description": "the alias of the animation sequence to sync with sound \n\t\tLeave blank (or null) to play whole movieClip",
-                    "type": "String*"
-                },
-                {
-                    "name": "numLoops",
-                    "description": "the number of times to play the synced animation when play() is called. \n\t\tvalue of 0 loops forever. Leave blank to play 1 time (or set as 1)",
-                    "type": "Number*"
-                },
-                {
-                    "name": "soundStartFrame",
-                    "description": "frame number on which synced sound starts \n    (EaselJS frame numbers start at \"0\" where flash is \"1\")",
-                    "type": "Number*"
+                    "name": "useCaptions",
+                    "description": "If a cloudkid.Captions object should be created for use \n\t\tor the captions object to use",
+                    "type": "bool|cloudkid.Captions",
+                    "optional": true,
+                    "optdefault": "false"
                 }
             ]
         }
@@ -83,7 +78,7 @@
     "classitems": [
         {
             "file": "src/Audio.js",
-            "line": 22,
+            "line": 24,
             "description": "Metadata regarding Primary Audio Sprite (URLs, Audio Timings)",
             "itemtype": "property",
             "name": "_data",
@@ -94,7 +89,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 29,
+            "line": 31,
             "description": "If the Audio instance has been destroyed",
             "itemtype": "property",
             "name": "_data",
@@ -106,7 +101,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 37,
+            "line": 39,
             "description": "Contains start + stop times for current sound",
             "itemtype": "property",
             "name": "_currentData",
@@ -117,7 +112,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 44,
+            "line": 46,
             "description": "The current alias of the sound playing",
             "itemtype": "property",
             "name": "_currentAlias",
@@ -128,7 +123,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 51,
+            "line": 53,
             "description": "Function to call when sound reaches end",
             "itemtype": "property",
             "name": "_onFinish",
@@ -139,7 +134,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 58,
+            "line": 60,
             "description": "Update the function",
             "itemtype": "property",
             "name": "_onUpdate",
@@ -150,7 +145,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 65,
+            "line": 67,
             "description": "Set true only if paused by pause() used to determine validity of resume()",
             "itemtype": "property",
             "name": "_paused",
@@ -162,7 +157,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 73,
+            "line": 75,
             "description": "The current progress amount from 0 to 1",
             "itemtype": "property",
             "name": "_progress",
@@ -173,7 +168,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 80,
+            "line": 82,
             "description": "If the sounds are muted",
             "itemtype": "property",
             "name": "_muted",
@@ -184,7 +179,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 87,
+            "line": 89,
             "description": "The length of silence to play in seconds",
             "itemtype": "property",
             "name": "_duration",
@@ -195,7 +190,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 94,
+            "line": 96,
             "description": "The postion we're currently on if muted",
             "itemtype": "property",
             "name": "_silencePosition",
@@ -206,7 +201,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 101,
+            "line": 103,
             "description": "The silence update alias",
             "itemtype": "property",
             "name": "_updateAlias",
@@ -218,7 +213,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 109,
+            "line": 111,
             "description": "The alias for the audiosprite update",
             "itemtype": "property",
             "name": "_updateSpriteAlias",
@@ -230,7 +225,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 117,
+            "line": 119,
             "description": "Instance of the SwishSprite class",
             "itemtype": "property",
             "name": "_audioSprite",
@@ -241,7 +236,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 124,
+            "line": 126,
             "description": "Singleton instance of sound player",
             "access": "private",
             "tagname": "",
@@ -252,7 +247,29 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 131,
+            "line": 133,
+            "description": "The currently playing (and thus valid) AudioInst object.",
+            "itemtype": "property",
+            "name": "_currentInst",
+            "type": "AudioInst",
+            "access": "private",
+            "tagname": "",
+            "class": "cloudkid.Audio"
+        },
+        {
+            "file": "src/Audio.js",
+            "line": 140,
+            "description": "If the sound file is loaded",
+            "itemtype": "property",
+            "name": "soundLoaded",
+            "type": "Bool",
+            "access": "public",
+            "tagname": "",
+            "class": "cloudkid.Audio"
+        },
+        {
+            "file": "src/Audio.js",
+            "line": 147,
             "description": "The global version of the library",
             "static": 1,
             "access": "public",
@@ -264,7 +281,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 139,
+            "line": 155,
             "description": "Static constructor initializing Audio (and soundManager)",
             "access": "public",
             "tagname": "",
@@ -287,7 +304,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 156,
+            "line": 172,
             "description": "Static function for getting the singleton instance",
             "static": 1,
             "readonly": "",
@@ -300,7 +317,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 167,
+            "line": 183,
             "description": "Audio controller constructor",
             "is_constructor": 1,
             "itemtype": "method",
@@ -321,7 +338,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 226,
+            "line": 242,
             "description": "Validate that the sprite data is alright",
             "access": "private",
             "tagname": "",
@@ -343,7 +360,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 253,
+            "line": 269,
             "description": "Check to make sure the audio is ready",
             "itemtype": "method",
             "name": "isReady",
@@ -364,7 +381,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 286,
+            "line": 302,
             "description": "Get the instance of the SwishSprite",
             "itemtype": "method",
             "name": "getAudioSprite",
@@ -378,7 +395,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 297,
+            "line": 313,
             "description": "Preload audio data for primary sprite, MUST be called by a click/touch event!!!",
             "access": "public",
             "tagname": "",
@@ -395,7 +412,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 346,
+            "line": 367,
             "description": "Goto the beginning of a sound",
             "access": "public",
             "tagname": "",
@@ -412,7 +429,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 358,
+            "line": 379,
             "description": "Returns true if a sound is currently being played",
             "access": "public",
             "tagname": "",
@@ -426,7 +443,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 369,
+            "line": 390,
             "description": "Used if we need to pause the current sound and resume later",
             "itemtype": "method",
             "name": "pause",
@@ -436,7 +453,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 390,
+            "line": 411,
             "description": "Used to resume sound paused with pause();",
             "itemtype": "method",
             "name": "resume",
@@ -446,7 +463,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 414,
+            "line": 435,
             "description": "Play sound from sprite by Alias",
             "itemtype": "method",
             "name": "play",
@@ -464,6 +481,11 @@
                     "type": "Function"
                 },
                 {
+                    "name": "onStart",
+                    "description": "Function to be called when playback starts.\n\t\tThis is called immediately, and is here to provide compatibility in usage with cloudkid.Sound.",
+                    "type": "Function"
+                },
+                {
                     "name": "onUpdate",
                     "description": "Function to return the current progress amount 0 to 1",
                     "type": "Function"
@@ -473,7 +495,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 451,
+            "line": 483,
             "description": "Start playing the silence when muted",
             "access": "private",
             "tagname": "",
@@ -483,7 +505,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 469,
+            "line": 501,
             "description": "Start the silence timer",
             "access": "private",
             "tagname": "",
@@ -493,7 +515,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 482,
+            "line": 514,
             "description": "Stop the silence update",
             "access": "private",
             "tagname": "",
@@ -503,7 +525,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 492,
+            "line": 524,
             "description": "Progress update for the silence playing",
             "access": "private",
             "tagname": "",
@@ -520,7 +542,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 514,
+            "line": 546,
             "description": "Internal method to play the audio",
             "access": "private",
             "tagname": "",
@@ -530,7 +552,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 533,
+            "line": 565,
             "description": "Callback for the progress change update on the audio sprite",
             "access": "private",
             "tagname": "",
@@ -547,7 +569,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 546,
+            "line": 578,
             "description": "When either the sound or mute has finished",
             "access": "private",
             "tagname": "",
@@ -557,7 +579,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 569,
+            "line": 601,
             "description": "Used if we need to stop playing a sound and we don't \nneed to resume from the current position",
             "access": "public",
             "tagname": "",
@@ -574,7 +596,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 606,
+            "line": 643,
             "description": "Returns length in seconds of named sprite sound",
             "itemtype": "method",
             "name": "getLength",
@@ -595,7 +617,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 620,
+            "line": 657,
             "description": "Set if the audio is muted",
             "access": "public",
             "tagname": "",
@@ -605,7 +627,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 638,
+            "line": 675,
             "description": "Set if the audio should turn off mute mode",
             "access": "public",
             "tagname": "",
@@ -615,7 +637,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 656,
+            "line": 693,
             "description": "Get the mute status of the audio",
             "itemtype": "method",
             "name": "getMuted",
@@ -629,7 +651,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 667,
+            "line": 704,
             "description": "Returns value of loop property for named sound",
             "access": "public",
             "tagname": "",
@@ -646,7 +668,28 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 680,
+            "line": 717,
+            "description": "Returns if a sound alias is in the spritemap.",
+            "access": "public",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "hasAlias",
+            "params": [
+                {
+                    "name": "alias",
+                    "description": "The sound alias to check for.",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "true if the alias is in the spritemap, false otherwise.",
+                "type": "Bool"
+            },
+            "class": "cloudkid.Audio"
+        },
+        {
+            "file": "src/Audio.js",
+            "line": 729,
             "description": "Returns array of sound aliases in spritemap",
             "access": "public",
             "tagname": "",
@@ -667,7 +710,7 @@
         },
         {
             "file": "src/Audio.js",
-            "line": 709,
+            "line": 758,
             "description": "Don't use after this, destroys singleton and releases all references",
             "access": "public",
             "tagname": "",
@@ -676,445 +719,331 @@
             "class": "cloudkid.Audio"
         },
         {
-            "file": "src/AudioAnimation.js",
-            "line": 33,
-            "description": "Referece to current instance of Audio",
-            "access": "private",
-            "tagname": "",
+            "file": "src/Audio.js",
+            "line": 794,
+            "description": "If this AudioInst is still valid (still the actively playing audio bit).\nIf this is false, then Audio is no longer playing this sound and this object should be discarded.",
             "itemtype": "property",
-            "name": "",
-            "type": "cloudkid.Audio",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 40,
-            "description": "The current number of sound animations created",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "",
-            "type": "Int",
-            "default": "0",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 49,
-            "description": "The MovieClip to sync with sound",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_clip",
-            "type": "createjs.MovieClip",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 56,
-            "description": "The page visibility detector",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_visibility",
-            "type": "cloudkid.PageVisibility",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 63,
-            "description": "Name of the sound tp sync MovieClip to",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_audioAlias",
-            "type": "String",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 70,
-            "description": "Label of animation sequence to sync",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_frameLabel",
-            "type": "String",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 77,
-            "description": "Numeric first frame of MovieClip in this animation sequence",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_animStartFrame",
-            "type": "Int",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 84,
-            "description": "Numeric last frame of MovieClip in this animation sequence",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_animEndFrame",
-            "type": "Int",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 91,
-            "description": "Number of frames in sequence",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_animDuration",
-            "type": "Int",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 98,
-            "description": "TweenJS Timeline Frame to start sound",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_audioStartFrame",
-            "type": "Int",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 105,
-            "description": "Length of sound in frames",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_audioDuration",
-            "type": "Int",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 112,
-            "description": "Has the sound started playing yet?",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_audioStarted",
+            "name": "isValid",
             "type": "Bool",
-            "default": "false",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 120,
-            "description": "Target frames per second of MovieClip",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_animationFPS",
-            "type": "Int",
-            "default": "24",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 128,
-            "description": "Number of times to play through. 0 means infinite",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_totalLoops",
-            "type": "Int",
-            "default": "1",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 136,
-            "description": "Keeps track of number of times played through",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_currentLoop",
-            "type": "Int",
-            "default": "0",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 144,
-            "description": "Previous percentage progress value received from Audio",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_lastProgress",
-            "type": "Number",
-            "default": "0",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 152,
-            "description": "Has this animation been paused by the pause() function?",
             "access": "public",
             "tagname": "",
-            "itemtype": "property",
-            "name": "paused",
-            "type": "Bool",
-            "default": "false",
-            "readonly": "",
-            "class": "cloudkid.AudioAnimation"
+            "class": "AudioInst"
         },
         {
-            "file": "src/AudioAnimation.js",
-            "line": 161,
-            "description": "Reference to the AnimatorTimeline of current animation sequence",
+            "file": "src/Audio.js",
+            "line": 801,
+            "description": "The start time of the sound in milliseconds.",
+            "itemtype": "property",
+            "name": "_start",
+            "type": "Number",
             "access": "private",
             "tagname": "",
-            "itemtype": "property",
-            "name": "_animation",
-            "type": "cloudkid.AnimatorTimeline",
-            "class": "cloudkid.AudioAnimation"
+            "class": "AudioInst"
         },
         {
-            "file": "src/AudioAnimation.js",
-            "line": 168,
-            "description": "Callback when we're done playing",
+            "file": "src/Audio.js",
+            "line": 807,
+            "description": "The end time of the sound in milliseconds.",
+            "itemtype": "property",
+            "name": "_end",
+            "type": "Number",
             "access": "private",
             "tagname": "",
-            "itemtype": "property",
-            "name": "_playCompleteCallback",
-            "type": "Function",
-            "class": "cloudkid.AudioAnimation"
+            "class": "AudioInst"
         },
         {
-            "file": "src/AudioAnimation.js",
-            "line": 175,
-            "description": "Boolean to check if the sound is finished",
-            "access": "private",
+            "file": "src/Audio.js",
+            "line": 813,
+            "description": "The length of the sound in milliseconds.",
+            "itemtype": "property",
+            "name": "length",
+            "type": "Number",
+            "access": "public",
             "tagname": "",
-            "itemtype": "property",
-            "name": "_audioDone",
-            "type": "Bool",
-            "class": "cloudkid.AudioAnimation"
+            "class": "AudioInst"
         },
         {
-            "file": "src/AudioAnimation.js",
-            "line": 182,
-            "description": "Boolean to check if the animation is done",
-            "access": "private",
+            "file": "src/Audio.js",
+            "line": 821,
+            "description": "The position of the sound playhead in milliseconds, or 0 if the AudioInst is no longer valid.",
+            "itemtype": "property",
+            "name": "position",
+            "type": "Number",
+            "access": "public",
             "tagname": "",
-            "itemtype": "property",
-            "name": "_animDone",
-            "type": "Bool",
-            "class": "cloudkid.AudioAnimation"
+            "class": "AudioInst"
         },
         {
-            "file": "src/AudioAnimation.js",
-            "line": 189,
-            "description": "Fudge Factor – how many frames out of sync can we be before we make corrections",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_syncDiff",
-            "type": "Int",
-            "default": "2",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 197,
-            "description": "If this should also control some captions as well.",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_handleCaptions",
-            "type": "Bool",
-            "default": "false",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 205,
-            "description": "A function to call when handling captions.",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "property",
-            "name": "_captionUpdate",
-            "type": "Function",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 212,
-            "description": "Constructor function for the AudioAnimation class",
-            "is_constructor": 1,
+            "file": "src/Audio.js",
+            "line": 832,
+            "description": "Stops Audio, if this AudioInst is still valid.",
             "itemtype": "method",
-            "name": "initialize",
-            "params": [
-                {
-                    "name": "movieClip",
-                    "description": "Reference to the movie clip",
-                    "type": "createjs.MovieClip"
-                },
-                {
-                    "name": "soundAlias",
-                    "description": "The alias to the sound to play",
-                    "type": "String"
-                },
-                {
-                    "name": "frameLabel",
-                    "description": "The frame label to play using Animator",
-                    "type": "String*"
-                },
-                {
-                    "name": "numLoops",
-                    "description": "The number of loops, defaults to 1, 0 is infinite",
-                    "type": "Number*"
-                },
-                {
-                    "name": "soundStartFrame",
-                    "description": "Specify a start sound frame, default to sound start",
-                    "type": "Number*"
-                }
-            ],
-            "class": "cloudkid.AudioAnimation"
+            "name": "stop",
+            "access": "public",
+            "tagname": "",
+            "class": "AudioInst"
         },
         {
-            "file": "src/AudioAnimation.js",
-            "line": 293,
-            "description": "Play Animation and Audio from beginning",
+            "file": "src/Audio.js",
+            "line": 845,
+            "description": "Pauses Audio, if this AudioInst is still valid.",
+            "itemtype": "method",
+            "name": "pause",
+            "access": "public",
+            "tagname": "",
+            "class": "AudioInst"
+        },
+        {
+            "file": "src/Audio.js",
+            "line": 858,
+            "description": "Resumes playing Audio, if this AudioInst is still valid.",
+            "itemtype": "method",
+            "name": "unpause",
+            "access": "public",
+            "tagname": "",
+            "class": "AudioInst"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 39,
+            "description": "The OS update callback alias for the VOPlayer",
+            "itemtype": "property",
+            "name": "ALIAS",
+            "type": "String",
+            "static": 1,
+            "final": 1,
+            "access": "private",
+            "tagname": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 48,
+            "description": "The current list of audio/silence times/functions. Generally you will not need to modify this.",
+            "itemtype": "property",
+            "name": "audioList",
+            "type": "Array",
+            "access": "public",
+            "tagname": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 55,
+            "description": "The current position in audioList.",
+            "itemtype": "property",
+            "name": "_listCounter",
+            "type": "Int",
+            "access": "private",
+            "tagname": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 62,
+            "description": "The current audio alias being played.",
+            "itemtype": "property",
+            "name": "_currentAudio",
+            "type": "String",
+            "access": "private",
+            "tagname": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 69,
+            "description": "The current audio instance being played.",
+            "itemtype": "property",
+            "name": "_audioInst",
+            "type": "SoundInst",
+            "access": "private",
+            "tagname": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 76,
+            "description": "The callback for when the list is finished.",
+            "itemtype": "property",
+            "name": "_callback",
+            "type": "Function",
+            "access": "private",
+            "tagname": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 83,
+            "description": "The bound _onAudioFinished call.",
+            "itemtype": "property",
+            "name": "_audioListener",
+            "type": "Function",
+            "access": "private",
+            "tagname": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 90,
+            "description": "A timer for silence entries in the list, in milliseconds.",
+            "itemtype": "property",
+            "name": "_timer",
+            "type": "Int",
+            "access": "private",
+            "tagname": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 97,
+            "description": "The cloudkid.Captions object used for captions. The developer is responsible for initializing this with a captions\ndictionary config file and a reference to a text field.",
+            "itemtype": "property",
+            "name": "captions",
+            "type": "cloudkid.Captions",
+            "access": "public",
+            "tagname": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 105,
+            "description": "An Array used when play() is called to avoid creating lots of Array objects.",
+            "itemtype": "property",
+            "name": "_listHelper",
+            "type": "Array",
+            "access": "private",
+            "tagname": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 112,
+            "description": "If VOPlayer is currently playing (audio or silence).",
+            "itemtype": "property",
+            "name": "playing",
+            "type": "Bool",
+            "access": "public",
+            "tagname": "",
+            "readonly": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 123,
+            "description": "Plays a single audio alias, interrupting any current playback.",
             "itemtype": "method",
             "name": "play",
             "access": "public",
             "tagname": "",
             "params": [
                 {
-                    "name": "The",
-                    "description": "optional callback when we're done playing, non-looping sound only!",
+                    "name": "id",
+                    "description": "The alias of the audio file to play.",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "The function to call when playback is complete.",
                     "type": "Function"
                 }
             ],
-            "class": "cloudkid.AudioAnimation"
+            "class": "cloudkid.VOPlayer"
         },
         {
-            "file": "src/AudioAnimation.js",
-            "line": 311,
-            "description": "Play AudioAnimation after data is ready. Also used for looping",
+            "file": "src/VOPlayer.js",
+            "line": 140,
+            "description": "Plays a list of audio files, timers, and/or functions, interrupting any current playback.\nAudio in the list will be preloaded to minimize pauses for loading.",
             "itemtype": "method",
-            "name": "_startPlayback",
-            "access": "private",
-            "tagname": "",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 359,
-            "description": "We recieved loop callback from sound or the sound is over",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "method",
-            "name": "_audioFinished",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 374,
-            "description": "Callback when the animation is finished",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "method",
-            "name": "_animationFinished",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 388,
-            "description": "Pause Animation and Audio at current position to be resumed later",
-            "itemtype": "method",
-            "name": "pause",
-            "access": "public",
-            "tagname": "",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 404,
-            "description": "Resume playback of Audio and Animation from paused position",
-            "itemtype": "method",
-            "name": "resume",
-            "access": "public",
-            "tagname": "",
-            "class": "cloudkid.AudioAnimation"
-        },
-        {
-            "file": "src/AudioAnimation.js",
-            "line": 420,
-            "description": "Stop playing animation and sound, and forget about current position",
-            "itemtype": "method",
-            "name": "stop",
+            "name": "playList",
             "access": "public",
             "tagname": "",
             "params": [
                 {
-                    "name": "If",
-                    "description": "we should do the callback (for instance, when skipping an animation)",
-                    "type": "Bool"
+                    "name": "list",
+                    "description": "The array of items to play/call in order.",
+                    "type": "Array"
+                },
+                {
+                    "name": "callback",
+                    "description": "The function to call when playback is complete.",
+                    "type": "Function"
                 }
             ],
-            "class": "cloudkid.AudioAnimation"
+            "class": "cloudkid.VOPlayer"
         },
         {
-            "file": "src/AudioAnimation.js",
-            "line": 443,
-            "description": "Check to see if we should do the finishing callback",
+            "file": "src/VOPlayer.js",
+            "line": 157,
+            "description": "Callback for when audio/timer is finished to advance to the next item in the list.",
+            "itemtype": "method",
+            "name": "_onAudioFinished",
             "access": "private",
             "tagname": "",
-            "itemtype": "method",
-            "name": "_doneCheck",
-            "class": "cloudkid.AudioAnimation"
+            "class": "cloudkid.VOPlayer"
         },
         {
-            "file": "src/AudioAnimation.js",
-            "line": 476,
-            "description": "We recieved a progress event from the sound. \nLet's make sure the animation isn't too far ahead or behind",
+            "file": "src/VOPlayer.js",
+            "line": 218,
+            "description": "The update callback used for silence timers and updating captions without active audio.\nThis method is bound to the VOPlayer instance.",
             "itemtype": "method",
             "name": "_update",
             "access": "private",
             "tagname": "",
             "params": [
                 {
-                    "name": "The",
-                    "description": "current percentage",
-                    "type": "Number"
+                    "name": "elapsed",
+                    "description": "The time elapsed since the previous frame, in milliseconds.",
+                    "type": "Int"
                 }
             ],
-            "class": "cloudkid.AudioAnimation"
+            "class": "cloudkid.VOPlayer"
         },
         {
-            "file": "src/AudioAnimation.js",
-            "line": 538,
-            "description": "Used to check if it's time to start a delayed sound",
+            "file": "src/VOPlayer.js",
+            "line": 238,
+            "description": "The update callback used for updating captions with active audio.\nThis method is bound to the VOPlayer instance.",
+            "itemtype": "method",
+            "name": "_updateCaptionPos",
             "access": "private",
             "tagname": "",
-            "itemtype": "method",
-            "name": "_onFrameUpdate",
-            "class": "cloudkid.AudioAnimation"
+            "params": [
+                {
+                    "name": "elapsed",
+                    "description": "The time elapsed since the previous frame, in milliseconds.",
+                    "type": "Int"
+                }
+            ],
+            "class": "cloudkid.VOPlayer"
         },
         {
-            "file": "src/AudioAnimation.js",
-            "line": 561,
-            "description": "Clear data and remove all references, don't use object after this",
+            "file": "src/VOPlayer.js",
+            "line": 251,
+            "description": "Plays the current audio item and begins preloading the next item.",
+            "itemtype": "method",
+            "name": "_playAudio",
+            "access": "private",
+            "tagname": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 277,
+            "description": "Stops playback of any audio/timer.",
+            "itemtype": "method",
+            "name": "stop",
             "access": "public",
             "tagname": "",
+            "class": "cloudkid.VOPlayer"
+        },
+        {
+            "file": "src/VOPlayer.js",
+            "line": 299,
+            "description": "Cleans up this VOPlayer.",
             "itemtype": "method",
             "name": "destroy",
-            "class": "cloudkid.AudioAnimation"
+            "access": "public",
+            "tagname": "",
+            "class": "cloudkid.VOPlayer"
         }
     ],
     "warnings": []
