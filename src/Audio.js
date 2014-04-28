@@ -1,3 +1,6 @@
+/**
+*  @module cloudkid
+*/
 (function(global, doc, undefined){
 	
 	"use strict";
@@ -9,7 +12,7 @@
 	
 	/**
 	* Audio class is designed to play audio sprites in a cross-platform compatible manner using HTML5 and the SwishSprite library.
-	* @class cloudkid.Audio
+	* @class Audio
 	*/
 	var Audio = function(dataURLorObject, onReady)
 	{
@@ -126,7 +129,7 @@
 	/** 
 	* Singleton instance of sound player 
 	* @private
-	* @property {cloudkid.Audio} _instance
+	* @property {Audio} _instance
 	*/
 	_instance = null,
 
@@ -174,7 +177,7 @@
 	*  @static
 	*  @readOnly
 	*  @public
-	*  @property {cloudkid.Audio} instance
+	*  @property {Audio} instance
 	*/
 	Object.defineProperty(Audio, "instance", {
 		get:function(){ return _instance; }

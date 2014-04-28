@@ -1,5 +1,10 @@
+/**
+*  @module cloudkid
+*/
 (function() {
 
+	"use strict";
+	
 	// Class Imports, we'll actually include them in the constructor
 	// incase these classes were included after in the load-order
 	var Captions,
@@ -9,7 +14,7 @@
 	/**
 	*	A class for managing audio by only playing one at a time, playing a list, and even
 	*	managing captions (CloudKidCaptions library) at the same time.
-	*	@class cloudkid.VOPlayer
+	*	@class VOPlayer
 	*	@constructor
 	*	@param {bool|cloudkid.Captions} [useCaptions=false] If a cloudkid.Captions object should be created for use 
 	*			or the captions object to use
