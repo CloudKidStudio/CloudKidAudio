@@ -3,7 +3,7 @@
         "name": "CloudKid Audio API",
         "description": "CloudKid Audio API: a library for playing HTML5 sprite audio",
         "version": "2.0.2",
-        "logo": "cloudkid.png"
+        "logo": ""
     },
     "files": {
         "src/Audio.js": {
