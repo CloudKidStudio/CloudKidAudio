@@ -39,15 +39,17 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/Audio.html">Audio</a></li>
+            
                 <li><a href="../classes/AudioInst.html">AudioInst</a></li>
             
-                <li><a href="../classes/cloudkid.Audio.html">cloudkid.Audio</a></li>
-            
-                <li><a href="../classes/cloudkid.VOPlayer.html">cloudkid.VOPlayer</a></li>
+                <li><a href="../classes/VOPlayer.html">VOPlayer</a></li>
             
             </ul>
 
             <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/cloudkid.html">cloudkid</a></li>
             
             </ul>
         </div>
@@ -89,6 +91,9 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
+/**
+*  @module cloudkid
+*/
 (function(global, doc, undefined){
 	
 	&quot;use strict&quot;;
@@ -100,7 +105,7 @@
 	
 	/**
 	* Audio class is designed to play audio sprites in a cross-platform compatible manner using HTML5 and the SwishSprite library.
-	* @class cloudkid.Audio
+	* @class Audio
 	*/
 	var Audio = function(dataURLorObject, onReady)
 	{
@@ -217,7 +222,7 @@
 	/** 
 	* Singleton instance of sound player 
 	* @private
-	* @property {cloudkid.Audio} _instance
+	* @property {Audio} _instance
 	*/
 	_instance = null,
 
@@ -265,7 +270,7 @@
 	*  @static
 	*  @readOnly
 	*  @public
-	*  @property {cloudkid.Audio} instance
+	*  @property {Audio} instance
 	*/
 	Object.defineProperty(Audio, &quot;instance&quot;, {
 		get:function(){ return _instance; }

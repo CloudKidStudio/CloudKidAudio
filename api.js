@@ -1,11 +1,18 @@
 YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
+        "Audio",
         "AudioInst",
-        "cloudkid.Audio",
-        "cloudkid.VOPlayer"
+        "VOPlayer"
     ],
-    "modules": [],
-    "allModules": []
+    "modules": [
+        "cloudkid"
+    ],
+    "allModules": [
+        {
+            "displayName": "cloudkid",
+            "name": "cloudkid"
+        }
+    ]
 } };
 });
