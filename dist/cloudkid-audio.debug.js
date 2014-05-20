@@ -4,21 +4,20 @@
         this._onUpdate = this._onUpdate.bind(this), this._onComplete = this._onComplete.bind(this), 
         this.initialize(dataURLorObject, onReady);
     }, p = Audio.prototype, _data = null, _destroyed = !1, _currentData = null, _currentAlias = null, _onFinish = null, _onUpdate = null, _paused = !1, _progress = 0, _muted = !1, _duration = 0, _silencePosition = 0, _updateAlias = "AudioMute", _updateSpriteAlias = "SwishSprite", _audioSprite = null, _instance = null, _currentInst = null;
-    p.soundLoaded = !1, Audio.VERSION = "2.0.2", Audio.init = function(dataURLorObject, onReady) {
+    p.soundLoaded = !1, Audio.VERSION = "2.1.0", Audio.init = function(dataURLorObject, onReady) {
         return _instance || new Audio(dataURLorObject, onReady), _instance;
     }, Object.defineProperty(Audio, "instance", {
         get: function() {
             return _instance;
         }
     }), p.initialize = function(dataURLorObject, onReady) {
-        return _instance ? (Debug.warn("Audio is already initialized, use Audio.instance"), 
-        void 0) : (_destroyed = !1, _instance = this, "object" == typeof dataURLorObject ? (Debug.log("Load the JSON object directly"), 
+        return _instance ? void Debug.warn("Audio is already initialized, use Audio.instance") : (_destroyed = !1, 
+        _instance = this, void ("object" == typeof dataURLorObject ? (Debug.log("Load the JSON object directly"), 
         validateData(dataURLorObject, onReady)) : "string" == typeof dataURLorObject ? (Debug.log("Load from the URL " + dataURLorObject), 
         MediaLoader.instance.load(dataURLorObject, function(result) {
-            return result && result.content ? (validateData(result.content, onReady), void 0) : (Debug.error("Unable to load the audio sprite data from url '" + dataUrl + "'"), 
-            onReady(!1), void 0);
-        })) : (Debug.error("Audio constructor data is not a URL or json object"), onReady(!1)), 
-        void 0);
+            return result && result.content ? void validateData(result.content, onReady) : (Debug.error("Unable to load the audio sprite data from url '" + dataUrl + "'"), 
+            void onReady(!1));
+        })) : (Debug.error("Audio constructor data is not a URL or json object"), onReady(!1))));
     };
     var validateData = function(data, callback) {
         _data = data;
@@ -39,7 +38,7 @@
     p.getAudioSprite = function() {
         return _audioSprite;
     }, p.load = function(callback) {
-        if (!_data) return Debug.error("Must load sprite data first."), void 0;
+        if (!_data) return void Debug.error("Must load sprite data first.");
         var i, resource, cacheManager = MediaLoader.instance.cacheManager, len = _data.resources.length;
         for (i = 0; len > i; i++) resource = _data.resources[i], _data.resources[i] = cacheManager.prepare(resource.url !== undefined ? resource.url : resource, !0);
         _audioSprite || (_audioSprite = new SwishSprite(_data), _audioSprite.manualUpdate = !0);
@@ -126,6 +125,7 @@
         this.isValid && _instance.resume();
     }, namespace("cloudkid").Audio = Audio;
 }(window, document), function() {
+    "use strict";
     var Captions, Audio, OS, VOPlayer = function(useCaptions) {
         Captions = cloudkid.Captions, Audio = cloudkid.Audio, OS = cloudkid.OS, this._audioListener = this._onAudioFinished.bind(this), 
         this._update = this._update.bind(this), this._updateCaptionPos = this._updateCaptionPos.bind(this), 
@@ -133,21 +133,21 @@
         this.captions.isSlave = !0), this._listHelper = [];
     }, p = VOPlayer.prototype = {}, ALIAS = "VOPlayer";
     p.audioList = null, p._listCounter = 0, p._currentAudio = null, p._audioInst = null, 
-    p._callback = null, p._audioListener = null, p._timer = 0, p.captions = null, p._listHelper = null, 
-    Object.defineProperty(p, "playing", {
+    p._callback = null, p._cancelledCallback = null, p._audioListener = null, p._timer = 0, 
+    p.captions = null, p._listHelper = null, Object.defineProperty(p, "playing", {
         get: function() {
             return null !== this._currentAudio || this._timer > 0;
         }
-    }), p.play = function(id, callback) {
+    }), p.play = function(id, callback, cancelledCallback) {
         this.stop(), this._listCounter = -1, this._listHelper[0] = id, this.audioList = this._listHelper, 
-        this._callback = callback, this._onAudioFinished();
-    }, p.playList = function(list, callback) {
+        this._callback = callback, this._cancelledCallback = cancelledCallback, this._onAudioFinished();
+    }, p.playList = function(list, callback, cancelledCallback) {
         this.stop(), this._listCounter = -1, this.audioList = list, this._callback = callback, 
-        this._onAudioFinished();
+        this._cancelledCallback = cancelledCallback, this._onAudioFinished();
     }, p._onAudioFinished = function() {
         if (OS.instance.removeUpdateCallback(ALIAS), this.captions && this._audioInst && this.captions.seek(this._audioInst.length), 
         this._audioInst = null, this._listCounter++, this._listCounter >= this.audioList.length) {
-            this.captions && this.captions.stop(), this._currentAudio = null;
+            this.captions && this.captions.stop(), this._currentAudio = null, this._cancelledCallback = null;
             var c = this._callback;
             this._callback = null, c && c();
         } else this._currentAudio = this.audioList[this._listCounter], "string" == typeof this._currentAudio ? this._playAudio() : "function" == typeof this._currentAudio ? (this._currentAudio(), 
@@ -163,12 +163,14 @@
         this._timer = this.captions.currentDuration, this._currentAudio = null, OS.instance.addUpdateCallback(ALIAS, this._update)) : (this._audioInst = s.play(this._currentAudio, this._audioListener), 
         this.captions && (this.captions.play(this._currentAudio), OS.instance.addUpdateCallback(ALIAS, this._updateCaptionPos)));
     }, p.stop = function() {
-        this._currentAudio && (Audio.instance.stop(), this._currentAudio = null, this._callback = null), 
-        this.captions && this.captions.stop(), OS.instance.removeUpdateCallback(ALIAS), 
-        this.audioList = null, this._timer = 0;
+        this._currentAudio && (Audio.instance.stop(), this._currentAudio = null), this.captions && this.captions.stop(), 
+        OS.instance.removeUpdateCallback(ALIAS), this.audioList = null, this._timer = 0, 
+        this._callback = null;
+        var c = this._cancelledCallback;
+        this._cancelledCallback = null, c && c();
     }, p.destroy = function() {
         this.stop(), this.audioList = null, this._listHelper = null, this._currentAudio = null, 
-        this._audioInst = null, this._callback = null, this._audioListener = null, this.captions && (this.captions.destroy(), 
-        this.captions = null);
+        this._audioInst = null, this._callback = null, this._cancelledCallback = null, this._audioListener = null, 
+        this.captions && (this.captions.destroy(), this.captions = null);
     }, namespace("cloudkid").VOPlayer = VOPlayer;
 }();

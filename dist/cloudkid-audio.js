@@ -1,3 +1,6 @@
+/**
+*  @module cloudkid
+*/
 (function(global, doc, undefined){
 	
 	"use strict";
@@ -9,7 +12,7 @@
 	
 	/**
 	* Audio class is designed to play audio sprites in a cross-platform compatible manner using HTML5 and the SwishSprite library.
-	* @class cloudkid.Audio
+	* @class Audio
 	*/
 	var Audio = function(dataURLorObject, onReady)
 	{
@@ -126,7 +129,7 @@
 	/** 
 	* Singleton instance of sound player 
 	* @private
-	* @property {cloudkid.Audio} _instance
+	* @property {Audio} _instance
 	*/
 	_instance = null,
 
@@ -174,7 +177,7 @@
 	*  @static
 	*  @readOnly
 	*  @public
-	*  @property {cloudkid.Audio} instance
+	*  @property {Audio} instance
 	*/
 	Object.defineProperty(Audio, "instance", {
 		get:function(){ return _instance; }
@@ -872,10 +875,15 @@
 	namespace('cloudkid').Audio = Audio;
 	
 }(window, document));
+/**
+*  @module cloudkid
+*/
 (function() {
 
+	"use strict";
+	
 	// Class Imports, we'll actually include them in the constructor
-	// incase these classes were included after in the load-order
+	// in case these classes were included after in the load-order
 	var Captions,
 		Audio,
 		OS;
@@ -883,7 +891,7 @@
 	/**
 	*	A class for managing audio by only playing one at a time, playing a list, and even
 	*	managing captions (CloudKidCaptions library) at the same time.
-	*	@class cloudkid.VOPlayer
+	*	@class VOPlayer
 	*	@constructor
 	*	@param {bool|cloudkid.Captions} [useCaptions=false] If a cloudkid.Captions object should be created for use 
 	*			or the captions object to use
@@ -955,6 +963,13 @@
 	p._callback = null;
 
 	/**
+	*	The callback for when the list is interrupted for any reason.
+	*	@property {function} _cancelledCallback
+	*	@private
+	*/
+	p._cancelledCallback = null;
+
+	/**
 	*	The bound _onAudioFinished call.
 	*	@property {function} _audioListener
 	*	@private
@@ -1000,14 +1015,16 @@
 	*	@public
 	*	@param {String} id The alias of the audio file to play.
 	*	@param {function} callback The function to call when playback is complete.
+	*	@param {function} cancelledCallback The function to call when playback is interrupted with a stop(), play() or playList() call.
 	*/
-	p.play = function(id, callback)
+	p.play = function(id, callback, cancelledCallback)
 	{
 		this.stop();
 		this._listCounter = -1;
 		this._listHelper[0] = id;
 		this.audioList = this._listHelper;
 		this._callback = callback;
+		this._cancelledCallback = cancelledCallback;
 		this._onAudioFinished();
 	};
 	
@@ -1018,13 +1035,15 @@
 	*	@public
 	*	@param {Array} list The array of items to play/call in order.
 	*	@param {function} callback The function to call when playback is complete.
+	*	@param {function} cancelledCallback The function to call when playback is interrupted with a stop(), play() or playList() call.
 	*/
-	p.playList = function(list, callback)
+	p.playList = function(list, callback, cancelledCallback)
 	{
 		this.stop();
 		this._listCounter = -1;
 		this.audioList = list;
 		this._callback = callback;
+		this._cancelledCallback = cancelledCallback;
 		this._onAudioFinished();
 	};
 	
@@ -1057,6 +1076,7 @@
 				this.captions.stop();
 			}
 			this._currentAudio = null;
+			this._cancelledCallback = null;
 			var c = this._callback;
 			this._callback = null;
 			if (c) c();
@@ -1159,7 +1179,6 @@
 		{
 			Audio.instance.stop();
 			this._currentAudio = null;
-			this._callback = null;
 		}
 		if (this.captions)
 		{
@@ -1168,6 +1187,10 @@
 		OS.instance.removeUpdateCallback(ALIAS);
 		this.audioList = null;
 		this._timer = 0;
+		this._callback = null;
+		var c = this._cancelledCallback;
+		this._cancelledCallback = null;
+		if (c) c();
 	};
 
 	/**
@@ -1183,6 +1206,7 @@
 		this._currentAudio = null;
 		this._audioInst = null;
 		this._callback = null;
+		this._cancelledCallback = null;
 		this._audioListener = null;
 
 		if (this.captions)
