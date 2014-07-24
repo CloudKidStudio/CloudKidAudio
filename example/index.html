@@ -9,20 +9,18 @@
 		<link rel="stylesheet" href="css/sprite.css">		
 
 		<script src="libs/jquery/dist/jquery.min.js"></script>
-		<script src="libs/tweenjs/lib/tweenjs-0.4.1.min.js"></script>
-		<script src="libs/easeljs/lib/easeljs-0.6.1.min.js"></script>
-		<script src="libs/preloadjs/lib/preloadjs-0.3.2.min.js"></script>
-		<script src="libs/easeljs/lib/movieclip-0.6.2.min.js"></script>
+		<script src="libs/tweenjs/lib/tweenjs.min.js"></script>
+		<script src="libs/easeljs/lib/easeljs.min.js"></script>
+		<script src="libs/preloadjs/lib/preloadjs.min.js"></script>
+		<script src="libs/easeljs/lib/movieclip.min.js"></script>
 		<script src="libs/cloudkid-debug/dist/cloudkid-debug.js"></script>
 		<script src="libs/cloudkid-namespace/namespace.js"></script>
 		<script src="libs/swish-sprite/dist/swish-sprite.min.js"></script>
 		<script src="libs/cloudkid-os/dist/cloudkid-os-createjs.min.js"></script>
 		<script src="libs/cloudkid-animation/dist/cloudkid-animation-createjs.min.js"></script>
-		
-		<script src="../dist/cloudkid-audio.debug.js"></script>
+		<script src="../dist/cloudkid-audio.js"></script>
+		<script src="js/Sprite.js"></script>
 
-		<script src="js/Sprite.js"></script>	
-			
  	</head>
 	<body class="unloaded">
 		<button id="load" class="disabled" disabled>Load</button>
@@ -32,20 +30,25 @@
 				<ul>				
 					<li><button data-action="stop" class="control disabled" disabled>Stop</button></li>
 					<li><button data-action="pause" class="control disabled" disabled>Pause</button></li>
-					<li><button data-action="unpause" class="control disabled" disabled>Unpause</button></li>
+					<li><button data-action="resume" class="control disabled" disabled>Unpause</button></li>
 					<li><button data-action="mute" class="control disabled" disabled>Mute</button></li>
 					<li><button data-action="unmute" class="control disabled" disabled>Unmute</button></li>
 				</ul>
 				<br style="clear:both">
 			</div>
-			<div class="timeline">
-				<div class="playbar" id="playbar"></div>
-			</div>
 		</div>
 		<div class="aliases">
+			<h1>Playback Priority</h1>
+			<ul>
+				<li><button disabled>Normal Priorities</button></li>
+				<li><button class="priority1" disabled>Medium Priority</button></li>
+				<li><button class="priority2" disabled>Highest Priority</button></li>
+			</ul>
+			<br style="clear:both">
 			<h1>Aliases</h1>
 			<ul id="aliases"></ul>
 			<br style="clear:both">
 		</div>
+		<canvas id="stage"></canvas>
 	</body>
 </html>

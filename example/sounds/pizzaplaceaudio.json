@@ -13,12 +13,14 @@
     "Cat_PizzaReward2": {
       "start": 6,
       "end": 7.5416326530612245,
-      "loop": false
+      "loop": false,
+      "priority" : 1
     },
     "Jesse_PizzaReward1": {
       "start": 9,
       "end": 10.109795918367347,
-      "loop": false
+      "loop": false,
+      "priority" : 1
     },
     "Mora_PizzaReward1": {
       "start": 12,
@@ -133,17 +135,20 @@
     "Peg_CatWantsPart": {
       "start": 88,
       "end": 90.45725623582767,
-      "loop": false
+      "loop": false,
+      "priority" : 2
     },
     "Peg_CatWantsWhole": {
       "start": 92,
       "end": 94.09219954648526,
-      "loop": false
+      "loop": false,
+      "priority" : 2
     },
     "Peg_ClickTheToppingToPickItUp": {
       "start": 96,
       "end": 100.7358276643991,
-      "loop": false
+      "loop": false,
+      "priority" : 2
     },
     "Peg_CorrectLetsCount1": {
       "start": 102,

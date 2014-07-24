@@ -266,7 +266,10 @@
 			if (DEBUG) Debug.error("Sprite JSON must contain spritemap dictionary");
 			success = false;
 		}
-		callback(success);
+		if (callback)
+		{
+			callback(success);
+		}
 	};
 	
 	/**
@@ -446,13 +449,39 @@
 	*  @param {Function} onUpdate Function to return the current progress amount 0 to 1
 	*/
 	p.play = function(alias, onFinish, onStart, onUpdate)
-	{
+	{		
 		if (!isReady(alias)) return null;
 		
+		var oldData = _currentData;
+		// The currently playing sprite should have a priority
+		if (oldData && oldData.priority === undefined)
+		{
+			oldData.priority = 0;
+		}
+
+		var newData = _data.spritemap[alias];
+		// The sprite we're trying to play should have a priority
+		if (newData.priority === undefined) 
+		{
+			newData.priority = 0;
+		}
+
+		// If the sprite we're trying to play is at
+		// a lower priority than the one currently playing
+		// then we should bail out. Priority is useful
+		// if we're playing voice over which is more 
+		// important than sound effects
+		if (oldData && newData.priority < oldData.priority)
+		{
+			return null;
+		}
+
+		// Stop any existing audio
 		if(!_paused) this.stop();
-		
+
 		_currentAlias = alias;
-		_currentData = _data.spritemap[alias];
+		_currentData = newData;
+
 		_onFinish = onFinish || null;
 		_onUpdate = onUpdate || null;
 		

@@ -45,7 +45,6 @@ button:active {
 	color:#333;
 }
 
-
 h1 {
 	margin:0;
 	padding:15px 0;
@@ -54,8 +53,11 @@ h1 {
 	font-weight:normal;
 	letter-spacing:-0.05em;
 }
+canvas {
+	display:none;
+}
 .aliases {
-	padding:180px 20px 20px;
+	padding:120px 20px 20px;
 }
 
 .controls ul {
@@ -89,6 +91,20 @@ h1 {
 	margin:5px auto;
 	display:block;
 	width:90%;
+}
+button.priority1 {
+	background:#fcc;
+}
+button.priority1:hover,
+button.priority1:active {
+	background:#c99;
+}
+button.priority2 {
+	background:#ffc;
+}
+button.priority2:hover,
+button.priority2:active {
+	background:#cc9;
 }
 .aliases {
 	line-height:2.8;
