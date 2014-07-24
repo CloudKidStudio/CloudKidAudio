@@ -4,7 +4,7 @@
         this._onUpdate = this._onUpdate.bind(this), this._onComplete = this._onComplete.bind(this), 
         this.initialize(dataURLorObject, onReady);
     }, p = Audio.prototype, _data = null, _destroyed = !1, _currentData = null, _currentAlias = null, _onFinish = null, _onUpdate = null, _paused = !1, _progress = 0, _muted = !1, _duration = 0, _silencePosition = 0, _updateAlias = "AudioMute", _updateSpriteAlias = "SwishSprite", _audioSprite = null, _instance = null, _currentInst = null;
-    p.soundLoaded = !1, Audio.VERSION = "2.2.0", Audio.init = function(dataURLorObject, onReady) {
+    p.soundLoaded = !1, Audio.VERSION = "2.2.1", Audio.init = function(dataURLorObject, onReady) {
         return _instance || new Audio(dataURLorObject, onReady), _instance;
     }, Object.defineProperty(Audio, "instance", {
         get: function() {
@@ -160,16 +160,16 @@
     }, p._update = function(elapsed) {
         this.captions && this.captions.updateTime(elapsed), this._timer -= elapsed, this._timer <= 0 && this._onAudioFinished();
     }, p._updateCaptionPos = function() {
-        this._audioInst && this.captions.seek(this._audioInst.position);
+        return this._audioInst ? this._audioInst.isValid ? void this.captions.seek(this._audioInst.position) : void this.stop() : void 0;
     }, p._playAudio = function() {
         var s = Audio.instance;
         !s.hasAlias(this._currentAudio) && this.captions && this.captions.hasCaption(this._currentAudio) ? (this.captions.play(this._currentAudio), 
         this._timer = this.captions.currentDuration, this._currentAudio = null, OS.instance.addUpdateCallback(ALIAS, this._update)) : (this._audioInst = s.play(this._currentAudio, this._audioListener), 
         this.captions && (this.captions.play(this._currentAudio), OS.instance.addUpdateCallback(ALIAS, this._updateCaptionPos)));
     }, p.stop = function() {
-        this._currentAudio && (Audio.instance.stop(), this._currentAudio = null), this.captions && this.captions.stop(), 
-        OS.instance.removeUpdateCallback(ALIAS), this.audioList = null, this._timer = 0, 
-        this._callback = null;
+        this._currentAudio && this._audioInst.isValid && (Audio.instance.stop(), this._currentAudio = null), 
+        this.captions && this.captions.stop(), OS.instance.removeUpdateCallback(ALIAS), 
+        this.audioList = null, this._timer = 0, this._callback = null;
         var c = this._cancelledCallback;
         this._cancelledCallback = null, c && c();
     }, p.destroy = function() {

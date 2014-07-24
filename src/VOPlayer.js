@@ -262,6 +262,12 @@
 	p._updateCaptionPos = function(elapsed)
 	{
 		if (!this._audioInst) return;
+		//if the audio was interrupted directly, then we should stop pretending that it is still playing
+		if(!this._audioInst.isValid)
+		{
+			this.stop();
+			return;
+		}
 		this.captions.seek(this._audioInst.position);
 	};
 
@@ -298,7 +304,7 @@
 	*/
 	p.stop = function()
 	{
-		if (this._currentAudio)
+		if (this._currentAudio && this._audioInst.isValid)
 		{
 			Audio.instance.stop();
 			this._currentAudio = null;

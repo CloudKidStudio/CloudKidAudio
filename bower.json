@@ -1,6 +1,6 @@
 {
     "name": "cloudkid-audio",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "main": "dist/cloudkid-audio.js",
     "dependencies": {
         "tweenjs" : "https://github.com/CloudKidStudio/TweenJS.git",
