@@ -153,7 +153,7 @@
 	* @public
 	* @property {String} VERSION
 	*/
-	Audio.VERSION = "2.2.1";
+	Audio.VERSION = "2.2.2";
 	
 	/**
 	* Static constructor initializing Audio (and soundManager)
@@ -473,6 +473,7 @@
 		// important than sound effects
 		if (oldData && newData.priority < oldData.priority)
 		{
+			if(onFinish) onFinish();//call the finish callback so code/app can continue without audio
 			return null;
 		}
 

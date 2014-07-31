@@ -16,6 +16,9 @@ $(function(){
 	// will be available to cloudkid.Audio
 	OS.init("stage");
 	OS.instance.addApp(new Application());
+
+	var voPlayer = new cloudkid.VOPlayer();
+	var voList = [];
 	
 	/**
 	*  Load the JSON data
@@ -57,13 +60,41 @@ $(function(){
 			.removeAttr('disabled')
 			.removeClass('disabled')
 			.click(function(){
-				Audio.instance.play($(this).data('alias'));
-		});
+				var alias = $(this).data('alias');
+				if($("#addToggle").hasClass('toggled'))
+				{
+					voList.push(alias);
+					$("#playerList").append('<li>' + alias + '</li>');
+				}
+				else
+					Audio.instance.play(alias);
+			});
 		$(".control")
 			.removeAttr('disabled')
 			.removeClass('disabled')
 			.click(function(){
 				Audio.instance[$(this).data('action')]();
-		});
+			});
+		$(".voControl")
+			.removeAttr('disabled')
+			.removeClass('disabled')
+			.click(function(){
+				switch($(this).data('action'))
+				{
+					case "clear":
+						voList.length = 0;
+						$("#playerList").empty();
+						break;
+					case "play":
+						voPlayer.playList(voList.slice());
+						break;
+					case "add":
+						if($(this).hasClass('toggled'))
+							$(this).removeClass('toggled');
+						else
+							$(this).addClass('toggled');
+						break;
+				}
+			});
 	};
 });

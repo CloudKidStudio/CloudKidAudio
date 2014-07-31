@@ -4,7 +4,7 @@
         this._onUpdate = this._onUpdate.bind(this), this._onComplete = this._onComplete.bind(this), 
         this.initialize(dataURLorObject, onReady);
     }, p = Audio.prototype, _data = null, _destroyed = !1, _currentData = null, _currentAlias = null, _onFinish = null, _onUpdate = null, _paused = !1, _progress = 0, _muted = !1, _duration = 0, _silencePosition = 0, _updateAlias = "AudioMute", _updateSpriteAlias = "SwishSprite", _audioSprite = null, _instance = null, _currentInst = null;
-    p.soundLoaded = !1, Audio.VERSION = "2.2.1", Audio.init = function(dataURLorObject, onReady) {
+    p.soundLoaded = !1, Audio.VERSION = "2.2.2", Audio.init = function(dataURLorObject, onReady) {
         return _instance || new Audio(dataURLorObject, onReady), _instance;
     }, Object.defineProperty(Audio, "instance", {
         get: function() {
@@ -62,10 +62,11 @@
         var oldData = _currentData;
         oldData && oldData.priority === undefined && (oldData.priority = 0);
         var newData = _data.spritemap[alias];
-        return newData.priority === undefined && (newData.priority = 0), oldData && newData.priority < oldData.priority ? null : (_paused || this.stop(), 
-        _currentAlias = alias, _currentData = newData, _onFinish = onFinish || null, _onUpdate = onUpdate || null, 
-        _paused = !1, _progress = 0, _silencePosition = 0, _muted ? this._playSilence() : this._playAudio(), 
-        _currentInst = new AudioInst(), _currentInst._end = 1e3 * _currentData.end, _currentInst._start = 1e3 * _currentData.start, 
+        return newData.priority === undefined && (newData.priority = 0), oldData && newData.priority < oldData.priority ? (onFinish && onFinish(), 
+        null) : (_paused || this.stop(), _currentAlias = alias, _currentData = newData, 
+        _onFinish = onFinish || null, _onUpdate = onUpdate || null, _paused = !1, _progress = 0, 
+        _silencePosition = 0, _muted ? this._playSilence() : this._playAudio(), _currentInst = new AudioInst(), 
+        _currentInst._end = 1e3 * _currentData.end, _currentInst._start = 1e3 * _currentData.start, 
         _currentInst.length = _currentInst._end - _currentInst._start, "function" == typeof onStart && setTimeout(onStart, 0), 
         _currentInst);
     }, p._playSilence = function() {
