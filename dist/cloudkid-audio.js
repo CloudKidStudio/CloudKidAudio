@@ -1254,5 +1254,5 @@
 	
 	// Assign to the global namespace
 	namespace('cloudkid').VOPlayer = VOPlayer;
-
+	namespace('cloudkid').Audio.VOPlayer = VOPlayer;
 }());
