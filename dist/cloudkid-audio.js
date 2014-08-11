@@ -5,10 +5,11 @@
 	
 	"use strict";
 	
-	// Imports
-	var OS = cloudkid.OS,
-		SwishSprite = cloudkid.SwishSprite,
-		MediaLoader = cloudkid.MediaLoader;
+	// Class Imports, we'll actually include them in the constructor
+	// in case these classes were included after in the load-order
+	var Application,
+		SwishSprite,
+		MediaLoader;
 	
 	/**
 	* Audio class is designed to play audio sprites in a cross-platform compatible manner using HTML5 and the SwishSprite library.
@@ -16,8 +17,13 @@
 	*/
 	var Audio = function(dataURLorObject, onReady)
 	{
+		Application = cloudkid.Application;
+		SwishSprite = cloudkid.SwishSprite;
+		MediaLoader = cloudkid.MediaLoader;
+
 		this._onUpdate = this._onUpdate.bind(this);
 		this._onComplete = this._onComplete.bind(this);
+		this._updateSilence = this._updateSilence.bind(this);
 		this.initialize(dataURLorObject, onReady);
 	},
 	
@@ -102,22 +108,6 @@
 	* @private
 	*/
 	_silencePosition = 0,
-	
-	/** 
-	* The silence update alias 
-	* @property {String} _updateAlias
-	* @private
-	* @default AudioMute
-	*/
-	_updateAlias = 'AudioMute',
-	
-	/** 
-	* The alias for the audiosprite update 
-	* @property {String} _updateSpriteAlias
-	* @private
-	* @default SwishSprite
-	*/
-	_updateSpriteAlias = 'SwishSprite',
 	
 	/** 
 	* Instance of the SwishSprite class 
@@ -360,9 +350,9 @@
 			callback();
 		});
 		
-		// Add the manual update from the OS
-		OS.instance.addUpdateCallback(
-			_updateSpriteAlias, 
+		// Add the manual update from the Application
+		Application.instance.on(
+			"update", 
 			_audioSprite.update
 		);
 		
@@ -538,9 +528,9 @@
 	*/
 	p._startSilence = function()
 	{
-		OS.instance.addUpdateCallback(
-			_updateAlias, 
-			this._updateSilence.bind(this)
+		Application.instance.on(
+			"update", 
+			this._updateSilence
 		);
 	};
 	
@@ -551,7 +541,7 @@
 	*/
 	p._stopSilence = function()
 	{
-		OS.instance.removeUpdateCallback(_updateAlias);
+		Application.instance.off("update", this._updateSilence);
 	};
 	
 	/**
@@ -802,7 +792,7 @@
 		if (_audioSprite)
 		{
 			// Remove the manual update
-			OS.instance.removeUpdateCallback(_updateSpriteAlias);
+			Application.instance.off("update", _audioSprite.update);
 			_audioSprite.destroy();
 		}
 		
@@ -916,7 +906,7 @@
 	// in case these classes were included after in the load-order
 	var Captions,
 		Audio,
-		OS;
+		Application;
 
 	/**
 	*	A class for managing audio by only playing one at a time, playing a list, and even
@@ -931,7 +921,7 @@
 		// Import classes
 		Captions = cloudkid.Captions;
 		Audio = cloudkid.Audio;
-		OS = cloudkid.OS;
+		Application = cloudkid.Application;
 
 		this._audioListener = this._onAudioFinished.bind(this);
 		this._update = this._update.bind(this);
@@ -947,15 +937,6 @@
 	
 	// Reference to the prototype
 	var p = VOPlayer.prototype = {};
-	
-	/**
-	*  The OS update callback alias for the VOPlayer
-	*  @property {String} ALIAS
-	*  @static
-	*  @final
-	*  @private
-	*/
-	var ALIAS = "VOPlayer";
 
 	/**
 	*	The current list of audio/silence times/functions. Generally you will not need to modify this.
@@ -1085,7 +1066,8 @@
 	p._onAudioFinished = function()
 	{
 		//remove any update callback
-		OS.instance.removeUpdateCallback(ALIAS);
+		Application.instance.off("update", this._update);
+		Application.instance.off("update", this._updateCaptionPos);
 
 		//if we have captions and an audio instance, set the caption time to the length of the audio
 		if (this.captions && this._audioInst)
@@ -1134,7 +1116,7 @@
 				//set up a timer to wait
 				this._timer = this._currentAudio;
 				this._currentAudio = null;
-				OS.instance.addUpdateCallback(ALIAS, this._update);
+				Application.instance.on("update", this._update);
 			}
 		}
 	};
@@ -1191,7 +1173,7 @@
 			this.captions.play(this._currentAudio);
 			this._timer = this.captions.currentDuration;
 			this._currentAudio = null;
-			OS.instance.addUpdateCallback(ALIAS, this._update);
+			Application.instance.on("update", this._update);
 		}
 		else
 		{
@@ -1199,7 +1181,7 @@
 			if (this.captions)
 			{
 				this.captions.play(this._currentAudio);
-				OS.instance.addUpdateCallback(ALIAS, this._updateCaptionPos);
+				Application.instance.on("update", this._updateCaptionPos);
 			}
 		}
 	};
@@ -1220,7 +1202,8 @@
 		{
 			this.captions.stop();
 		}
-		OS.instance.removeUpdateCallback(ALIAS);
+		Application.instance.off("update", this._update);
+		Application.instance.off("update", this._updateCaptionPos);
 		this.audioList = null;
 		this._timer = 0;
 		this._callback = null;

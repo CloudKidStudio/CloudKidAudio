@@ -5,10 +5,11 @@
 	
 	"use strict";
 	
-	// Imports
-	var OS = cloudkid.OS,
-		SwishSprite = cloudkid.SwishSprite,
-		MediaLoader = cloudkid.MediaLoader;
+	// Class Imports, we'll actually include them in the constructor
+	// in case these classes were included after in the load-order
+	var Application,
+		SwishSprite,
+		MediaLoader;
 	
 	/**
 	* Audio class is designed to play audio sprites in a cross-platform compatible manner using HTML5 and the SwishSprite library.
@@ -16,8 +17,13 @@
 	*/
 	var Audio = function(dataURLorObject, onReady)
 	{
+		Application = cloudkid.Application;
+		SwishSprite = cloudkid.SwishSprite;
+		MediaLoader = cloudkid.MediaLoader;
+
 		this._onUpdate = this._onUpdate.bind(this);
 		this._onComplete = this._onComplete.bind(this);
+		this._updateSilence = this._updateSilence.bind(this);
 		this.initialize(dataURLorObject, onReady);
 	},
 	
@@ -102,22 +108,6 @@
 	* @private
 	*/
 	_silencePosition = 0,
-	
-	/** 
-	* The silence update alias 
-	* @property {String} _updateAlias
-	* @private
-	* @default AudioMute
-	*/
-	_updateAlias = 'AudioMute',
-	
-	/** 
-	* The alias for the audiosprite update 
-	* @property {String} _updateSpriteAlias
-	* @private
-	* @default SwishSprite
-	*/
-	_updateSpriteAlias = 'SwishSprite',
 	
 	/** 
 	* Instance of the SwishSprite class 
@@ -360,9 +350,9 @@
 			callback();
 		});
 		
-		// Add the manual update from the OS
-		OS.instance.addUpdateCallback(
-			_updateSpriteAlias, 
+		// Add the manual update from the Application
+		Application.instance.on(
+			"update", 
 			_audioSprite.update
 		);
 		
@@ -538,9 +528,9 @@
 	*/
 	p._startSilence = function()
 	{
-		OS.instance.addUpdateCallback(
-			_updateAlias, 
-			this._updateSilence.bind(this)
+		Application.instance.on(
+			"update", 
+			this._updateSilence
 		);
 	};
 	
@@ -551,7 +541,7 @@
 	*/
 	p._stopSilence = function()
 	{
-		OS.instance.removeUpdateCallback(_updateAlias);
+		Application.instance.off("update", this._updateSilence);
 	};
 	
 	/**
@@ -802,7 +792,7 @@
 		if (_audioSprite)
 		{
 			// Remove the manual update
-			OS.instance.removeUpdateCallback(_updateSpriteAlias);
+			Application.instance.off("update", _audioSprite.update);
 			_audioSprite.destroy();
 		}
 		

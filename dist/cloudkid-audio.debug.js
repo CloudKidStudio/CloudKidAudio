@@ -1,9 +1,10 @@
 !function(global, doc, undefined) {
     "use strict";
-    var OS = cloudkid.OS, SwishSprite = cloudkid.SwishSprite, MediaLoader = cloudkid.MediaLoader, Audio = function(dataURLorObject, onReady) {
+    var Application, SwishSprite, MediaLoader, Audio = function(dataURLorObject, onReady) {
+        Application = cloudkid.Application, SwishSprite = cloudkid.SwishSprite, MediaLoader = cloudkid.MediaLoader, 
         this._onUpdate = this._onUpdate.bind(this), this._onComplete = this._onComplete.bind(this), 
-        this.initialize(dataURLorObject, onReady);
-    }, p = Audio.prototype, _data = null, _destroyed = !1, _currentData = null, _currentAlias = null, _onFinish = null, _onUpdate = null, _paused = !1, _progress = 0, _muted = !1, _duration = 0, _silencePosition = 0, _updateAlias = "AudioMute", _updateSpriteAlias = "SwishSprite", _audioSprite = null, _instance = null, _currentInst = null;
+        this._updateSilence = this._updateSilence.bind(this), this.initialize(dataURLorObject, onReady);
+    }, p = Audio.prototype, _data = null, _destroyed = !1, _currentData = null, _currentAlias = null, _onFinish = null, _onUpdate = null, _paused = !1, _progress = 0, _muted = !1, _duration = 0, _silencePosition = 0, _audioSprite = null, _instance = null, _currentInst = null;
     p.soundLoaded = !1, Audio.VERSION = "2.2.2", Audio.init = function(dataURLorObject, onReady) {
         return _instance || new Audio(dataURLorObject, onReady), _instance;
     }, Object.defineProperty(Audio, "instance", {
@@ -46,7 +47,7 @@
         _audioSprite.off(SwishSprite.LOADED), _audioSprite.on(SwishSprite.LOADED, function() {
             _audioSprite.off(SwishSprite.LOADED).on(SwishSprite.PROGRESS, self._onUpdate).on(SwishSprite.COMPLETE, self._onComplete), 
             self.soundLoaded = !0, callback();
-        }), OS.instance.addUpdateCallback(_updateSpriteAlias, _audioSprite.update), _audioSprite.load();
+        }), Application.instance.on("update", _audioSprite.update), _audioSprite.load();
     }, p.prepare = function(alias) {
         isReady(alias) && _audioSprite.prepare(alias);
     }, p.isPlaying = function() {
@@ -73,9 +74,9 @@
         _duration = this.getLength(_currentAlias), _silencePosition = _audioSprite.getPosition(), 
         _onUpdate && _onUpdate(_progress), this._startSilence();
     }, p._startSilence = function() {
-        OS.instance.addUpdateCallback(_updateAlias, this._updateSilence.bind(this));
+        Application.instance.on("update", this._updateSilence);
     }, p._stopSilence = function() {
-        OS.instance.removeUpdateCallback(_updateAlias);
+        Application.instance.off("update", this._updateSilence);
     }, p._updateSilence = function(elapsed) {
         _silencePosition += elapsed / 1e3, _progress = _silencePosition / _duration, _duration > _silencePosition ? _onUpdate && _onUpdate(Math.min(1, Math.max(0, _progress))) : this._onComplete();
     }, p._playAudio = function() {
@@ -111,7 +112,7 @@
         if (includeSilence) for (key in _data.spritemap) map.push(key); else for (key in _data.spritemap) "silence" != key && map.push(key);
         return map;
     }, p.destroy = function() {
-        _destroyed || (this.stop(), _audioSprite && (OS.instance.removeUpdateCallback(_updateSpriteAlias), 
+        _destroyed || (this.stop(), _audioSprite && (Application.instance.off("update", _audioSprite.update), 
         _audioSprite.destroy()), _instance = _audioSprite = _data = _currentData = _currentAlias = _onUpdate = _onFinish = null, 
         _destroyed = !0);
     };
@@ -131,12 +132,12 @@
     }, namespace("cloudkid").Audio = Audio;
 }(window, document), function() {
     "use strict";
-    var Captions, Audio, OS, VOPlayer = function(useCaptions) {
-        Captions = cloudkid.Captions, Audio = cloudkid.Audio, OS = cloudkid.OS, this._audioListener = this._onAudioFinished.bind(this), 
-        this._update = this._update.bind(this), this._updateCaptionPos = this._updateCaptionPos.bind(this), 
-        useCaptions && (this.captions = useCaptions instanceof Captions ? useCaptions : new Captions(), 
+    var Captions, Audio, Application, VOPlayer = function(useCaptions) {
+        Captions = cloudkid.Captions, Audio = cloudkid.Audio, Application = cloudkid.Application, 
+        this._audioListener = this._onAudioFinished.bind(this), this._update = this._update.bind(this), 
+        this._updateCaptionPos = this._updateCaptionPos.bind(this), useCaptions && (this.captions = useCaptions instanceof Captions ? useCaptions : new Captions(), 
         this.captions.isSlave = !0), this._listHelper = [];
-    }, p = VOPlayer.prototype = {}, ALIAS = "VOPlayer";
+    }, p = VOPlayer.prototype = {};
     p.audioList = null, p._listCounter = 0, p._currentAudio = null, p._audioInst = null, 
     p._callback = null, p._cancelledCallback = null, p._audioListener = null, p._timer = 0, 
     p.captions = null, p._listHelper = null, Object.defineProperty(p, "playing", {
@@ -150,14 +151,15 @@
         this.stop(), this._listCounter = -1, this.audioList = list, this._callback = callback, 
         this._cancelledCallback = cancelledCallback, this._onAudioFinished();
     }, p._onAudioFinished = function() {
-        if (OS.instance.removeUpdateCallback(ALIAS), this.captions && this._audioInst && this.captions.seek(this._audioInst.length), 
+        if (Application.instance.off("update", this._update), Application.instance.off("update", this._updateCaptionPos), 
+        this.captions && this._audioInst && this.captions.seek(this._audioInst.length), 
         this._audioInst = null, this._listCounter++, this._listCounter >= this.audioList.length) {
             this.captions && this.captions.stop(), this._currentAudio = null, this._cancelledCallback = null;
             var c = this._callback;
             this._callback = null, c && c();
         } else this._currentAudio = this.audioList[this._listCounter], "string" == typeof this._currentAudio ? this._playAudio() : "function" == typeof this._currentAudio ? (this._currentAudio(), 
         this._onAudioFinished()) : (this._timer = this._currentAudio, this._currentAudio = null, 
-        OS.instance.addUpdateCallback(ALIAS, this._update));
+        Application.instance.on("update", this._update));
     }, p._update = function(elapsed) {
         this.captions && this.captions.updateTime(elapsed), this._timer -= elapsed, this._timer <= 0 && this._onAudioFinished();
     }, p._updateCaptionPos = function() {
@@ -165,12 +167,13 @@
     }, p._playAudio = function() {
         var s = Audio.instance;
         !s.hasAlias(this._currentAudio) && this.captions && this.captions.hasCaption(this._currentAudio) ? (this.captions.play(this._currentAudio), 
-        this._timer = this.captions.currentDuration, this._currentAudio = null, OS.instance.addUpdateCallback(ALIAS, this._update)) : (this._audioInst = s.play(this._currentAudio, this._audioListener), 
-        this.captions && (this.captions.play(this._currentAudio), OS.instance.addUpdateCallback(ALIAS, this._updateCaptionPos)));
+        this._timer = this.captions.currentDuration, this._currentAudio = null, Application.instance.on("update", this._update)) : (this._audioInst = s.play(this._currentAudio, this._audioListener), 
+        this.captions && (this.captions.play(this._currentAudio), Application.instance.on("update", this._updateCaptionPos)));
     }, p.stop = function() {
         this._currentAudio && this._audioInst.isValid && (Audio.instance.stop(), this._currentAudio = null), 
-        this.captions && this.captions.stop(), OS.instance.removeUpdateCallback(ALIAS), 
-        this.audioList = null, this._timer = 0, this._callback = null;
+        this.captions && this.captions.stop(), Application.instance.off("update", this._update), 
+        Application.instance.off("update", this._updateCaptionPos), this.audioList = null, 
+        this._timer = 0, this._callback = null;
         var c = this._cancelledCallback;
         this._cancelledCallback = null, c && c();
     }, p.destroy = function() {
