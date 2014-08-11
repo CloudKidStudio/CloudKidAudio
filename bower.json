@@ -3,9 +3,8 @@
     "version": "2.2.2",
     "main": "dist/cloudkid-audio.js",
     "dependencies": {
-        "tweenjs" : "https://github.com/CloudKidStudio/TweenJS.git",
         "swish-sprite" : "^1.0.5",
-        "cloudkid-os" : "*"
+        "cloudkid-framework" : "*"
     },
     "ignore": [
         "build.xml",

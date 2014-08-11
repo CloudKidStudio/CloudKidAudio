@@ -3,8 +3,7 @@ $(function(){
 	// Imports
 	var SwishSprite = cloudkid.SwishSprite,
 		Audio = cloudkid.Audio,
-		Application = cloudkid.Application,
-		OS = cloudkid.OS;
+		Application = cloudkid.Application;
 	
 	if (/[0-9\.]+/.test(document.location.host))
 	{
@@ -12,10 +11,9 @@ $(function(){
 	}
 
 	// We aren't actually using the canvas or application, 
-	// but we need to create and OS so that the update
+	// but we need to create an Application so that the global update
 	// will be available to cloudkid.Audio
-	OS.init("stage");
-	OS.instance.addApp(new Application());
+	new Application();
 
 	var voPlayer = new cloudkid.VOPlayer();
 	var voList = [];
