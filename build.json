@@ -1,0 +1,11 @@
+{
+	"name" : "CloudKidAudio",
+	"version" : "2.2.2",
+	"description" : "A library for playing HTML5 sprite audio",
+	"url" : "http://github.com/CloudKidStudio/CloudKidAudio",
+	"output" : "cloudkid-audio",
+	"main" : [
+		"src/Audio.js",
+		"src/VOPlayer.js"
+	]
+}
